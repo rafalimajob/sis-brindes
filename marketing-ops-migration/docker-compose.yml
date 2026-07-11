@@ -1,0 +1,15 @@
+services:
+  db:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: marketing_ops
+      POSTGRES_PASSWORD: marketing_ops
+      POSTGRES_DB: marketing_ops
+    ports:
+      - "5432:5432"
+    volumes:
+      - marketing_ops_db:/var/lib/postgresql/data
+
+volumes:
+  marketing_ops_db:

@@ -1,0 +1,303 @@
+// ============================================================================
+// Marketing Ops — schema de banco de dados de produção
+// Stack: PostgreSQL + Prisma
+// ============================================================================
+
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+// ----------------------------------------------------------------------------
+// ENUMS
+// ----------------------------------------------------------------------------
+
+enum OrderStatus {
+  RASCUNHO
+  EM_ELABORACAO
+  AGUARDANDO_COTACAO
+  COTACAO_RECEBIDA
+  AGUARDANDO_EMISSAO_OC
+  PEDIDO_ENVIADO_FORNECEDOR
+  EM_PRODUCAO
+  EM_TRANSPORTE
+  ENTREGUE
+  CANCELADO
+}
+
+enum MovementDirection {
+  ENTRADA
+  SAIDA
+}
+
+// Tipos de movimentação. O campo `direction` acima determina se soma ou
+// subtrai do estoque; `type` guarda o motivo específico exibido na UI.
+enum MovementType {
+  COMPRA               // entrada
+  DEVOLUCAO            // entrada
+  AJUSTE_ENTRADA       // entrada
+  EVENTO               // saída
+  BRINDE               // saída
+  KIT                  // saída
+  CONSUMO_INTERNO      // saída
+  AJUSTE_SAIDA         // saída
+}
+
+enum HistoryAction {
+  CREATE
+  UPDATE
+  DELETE
+}
+
+enum HistoryEntity {
+  ORDER
+  STOCK_ITEM
+  MOVEMENT
+  KIT
+}
+
+// ----------------------------------------------------------------------------
+// AUTENTICAÇÃO — cadastro de usuários por e-mail, com login via MFA (TOTP).
+// `role` já existe para diferenciar administradores de demais usuários, mas
+// a aplicação inicial pode tratar todos como equivalentes até haver uma
+// necessidade real de permissões distintas.
+// ----------------------------------------------------------------------------
+
+enum UserRole {
+  ADMIN
+  USER
+}
+
+model User {
+  id                 String    @id @default(cuid())
+  name               String
+  email              String    @unique
+  emailVerified      DateTime?                          // preenchido após confirmação por e-mail
+  passwordHash       String
+  role               UserRole  @default(USER)
+
+  // --- MFA (TOTP, ex: Google Authenticator/Authy) ---
+  mfaEnabled         Boolean   @default(false)
+  mfaSecret          String?                              // gerado no cadastro, armazenar criptografado em repouso
+  mfaBackupCodes     String[]                              // códigos de recuperação de uso único (armazenar hasheados)
+
+  verificationTokens VerificationToken[]
+  historyLogs        HistoryLog[]
+
+  // --- Rastreabilidade: quem fez o quê ---
+  createdStockItems  StockItem[]          @relation("StockItemCreatedBy")
+  updatedStockItems  StockItem[]          @relation("StockItemUpdatedBy")
+  movementsPerformed Movement[]           @relation("MovementPerformedBy")
+  kitOutputsPerformed KitOutput[]         @relation("KitOutputPerformedBy")
+
+  createdAt          DateTime  @default(now())
+  updatedAt          DateTime  @updatedAt
+
+  @@map("users")
+}
+
+// Usado tanto para confirmação de e-mail no cadastro quanto para o desafio
+// de MFA durante o login (token de curta duração vinculado ao usuário).
+model VerificationToken {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  token     String   @unique
+  purpose   String                                       // "EMAIL_VERIFICATION" | "MFA_CHALLENGE" | "PASSWORD_RESET"
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+
+  @@index([userId])
+  @@map("verification_tokens")
+}
+
+// ----------------------------------------------------------------------------
+// MÓDULO 2 — PEDIDOS DE COMPRA
+// ----------------------------------------------------------------------------
+
+model Order {
+  id            String       @id @default(cuid())
+  stockItemId   String                                   // pedido sempre se refere a um item já cadastrado no Estoque
+  stockItem     StockItem    @relation(fields: [stockItemId], references: [id], onDelete: Restrict)
+  quantity      Int                                       // quantidade solicitada; ao confirmar entrega, soma no estoque
+  ocNumber      String       @db.VarChar(50)          // Número da Ordem de Compra
+  project       String                                  // Projeto/Campanha
+  status        OrderStatus  @default(RASCUNHO)
+  requestDate   DateTime                                 // Data da solicitação
+  expectedDate  DateTime?                                // Data prevista de entrega
+  deliveredDate DateTime?                                // Data efetiva da entrega
+  notes         String?      @db.Text
+
+  attachments   Attachment[]
+  movements     Movement[]                              // movimentações originadas deste pedido (ex: recebimento da entrega)
+
+  createdAt     DateTime     @default(now())
+  updatedAt     DateTime     @updatedAt
+
+  @@index([status])
+  @@index([project])
+  @@index([ocNumber])
+  @@index([stockItemId])
+  @@map("orders")
+}
+
+model Attachment {
+  id         String   @id @default(cuid())
+  orderId    String
+  order      Order    @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  filename   String
+  url        String                                    // caminho no storage (S3/Blob/local)
+  mimeType   String
+  sizeBytes  Int
+  uploadedAt DateTime @default(now())
+
+  @@index([orderId])
+  @@map("attachments")
+}
+
+// ----------------------------------------------------------------------------
+// MÓDULO 3 — ESTOQUE
+// ----------------------------------------------------------------------------
+
+model StockItem {
+  id               String   @id @default(cuid())
+  code             String   @unique                     // gerado automaticamente, ex: MKT-0001
+  name             String
+  category         String
+  photoUrl         String?
+  quantity         Int      @default(0)
+  minStock         Int      @default(0)
+  idealStock       Int      @default(0)
+  lastCost         Decimal? @db.Decimal(10, 2)
+  lastPurchaseDate DateTime?
+  location         String?                              // localização física
+
+  // Rastreabilidade obrigatória: quem cadastrou e quem fez a última alteração
+  createdById      String
+  createdBy        User      @relation("StockItemCreatedBy", fields: [createdById], references: [id], onDelete: Restrict)
+  updatedById      String
+  updatedBy        User      @relation("StockItemUpdatedBy", fields: [updatedById], references: [id], onDelete: Restrict)
+
+  movements        Movement[]
+  kitItems         KitItem[]
+  orders           Order[]
+
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+
+  @@index([category])
+  @@index([name])
+  @@map("stock_items")
+}
+
+// ----------------------------------------------------------------------------
+// MÓDULO 4 — MOVIMENTAÇÕES
+// Toda alteração de saldo passa por aqui. O saldo em StockItem.quantity é
+// mantido consistente via transação Prisma (ver lib/movements.ts no guia).
+// ----------------------------------------------------------------------------
+
+model Movement {
+  id        String            @id @default(cuid())
+  date      DateTime          @default(now())
+  direction MovementDirection
+  type      MovementType
+  quantity  Int                                          // sempre positivo; o sinal é dado por `direction`
+  project   String?                                       // Projeto/Campanha associado
+  notes     String?           @db.Text
+
+  stockItemId String
+  stockItem   StockItem @relation(fields: [stockItemId], references: [id], onDelete: Restrict)
+
+  orderId     String?
+  order       Order?    @relation(fields: [orderId], references: [id], onDelete: SetNull)
+
+  kitOutputId String?                                     // agrupa as N movimentações geradas por uma saída de kit
+  kitOutput   KitOutput? @relation(fields: [kitOutputId], references: [id], onDelete: SetNull)
+
+  // Rastreabilidade obrigatória: toda movimentação registra quem a realizou
+  performedById String
+  performedBy   User    @relation("MovementPerformedBy", fields: [performedById], references: [id], onDelete: Restrict)
+
+  createdAt DateTime @default(now())
+
+  @@index([stockItemId])
+  @@index([date])
+  @@index([project])
+  @@index([performedById])
+  @@map("movements")
+}
+
+// ----------------------------------------------------------------------------
+// MÓDULO 5 — KITS
+// ----------------------------------------------------------------------------
+
+model Kit {
+  id        String     @id @default(cuid())
+  name      String
+  items     KitItem[]
+  outputs   KitOutput[]
+
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+
+  @@map("kits")
+}
+
+model KitItem {
+  id          String    @id @default(cuid())
+  kitId       String
+  kit         Kit       @relation(fields: [kitId], references: [id], onDelete: Cascade)
+  stockItemId String
+  stockItem   StockItem @relation(fields: [stockItemId], references: [id], onDelete: Restrict)
+  quantity    Int                                          // quantidade do item por unidade de kit
+
+  @@unique([kitId, stockItemId])
+  @@map("kit_items")
+}
+
+// Registra cada "saída de N kits" como um evento único, que por sua vez
+// gera uma Movement (SAIDA / KIT) por item componente — preservando
+// rastreabilidade agregada e granular ao mesmo tempo.
+model KitOutput {
+  id        String     @id @default(cuid())
+  kitId     String
+  kit       Kit        @relation(fields: [kitId], references: [id], onDelete: Restrict)
+  quantity  Int                                            // número de kits retirados
+  project   String?
+  notes     String?    @db.Text
+  date      DateTime   @default(now())
+
+  // Rastreabilidade obrigatória: quem registrou a retirada do kit
+  performedById String
+  performedBy   User    @relation("KitOutputPerformedBy", fields: [performedById], references: [id], onDelete: Restrict)
+
+  movements Movement[]
+
+  @@index([performedById])
+  @@map("kit_outputs")
+}
+
+// ----------------------------------------------------------------------------
+// HISTÓRICO — toda alteração relevante do sistema
+// ----------------------------------------------------------------------------
+
+model HistoryLog {
+  id         String        @id @default(cuid())
+  timestamp  DateTime      @default(now())
+  action     HistoryAction
+  entity     HistoryEntity
+  entityId   String
+  summary    String                                        // descrição legível, ex: "Status alterado de X para Y"
+  diff       Json?                                          // payload antes/depois para auditoria detalhada
+
+  userId     String?
+  user       User?         @relation(fields: [userId], references: [id], onDelete: SetNull)
+
+  @@index([entity, entityId])
+  @@index([timestamp])
+  @@map("history_logs")
+}
