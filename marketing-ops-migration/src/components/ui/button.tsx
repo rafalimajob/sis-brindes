@@ -1,30 +1,37 @@
 import { ButtonHTMLAttributes, forwardRef } from "react";
 
 type Variant = "primary" | "secondary" | "ghost" | "danger" | "success";
+type Size = "sm" | "md";
 
 const VARIANT_CLASSES: Record<Variant, string> = {
   primary:
-    "bg-brand-primary text-white hover:bg-brand-primary-dark disabled:opacity-50",
+    "bg-brand-solid text-white shadow-sm hover:bg-brand-solid-hover active:bg-brand-solid-hover disabled:opacity-50 disabled:shadow-none",
   secondary:
-    "bg-zinc-100 text-zinc-900 hover:bg-zinc-200 dark:bg-zinc-800 dark:text-zinc-50 dark:hover:bg-zinc-700",
+    "border border-zinc-200 bg-white text-zinc-700 hover:border-zinc-300 hover:bg-zinc-50 dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-200 dark:hover:bg-zinc-800",
   ghost:
     "bg-transparent text-zinc-600 hover:bg-zinc-100 dark:text-zinc-300 dark:hover:bg-zinc-800",
-  danger: "bg-brand-crit text-white hover:opacity-90 disabled:opacity-50",
-  success: "bg-brand-ok text-white hover:opacity-90 disabled:opacity-70",
+  danger: "bg-brand-crit text-white shadow-sm hover:opacity-90 disabled:opacity-50",
+  success: "bg-brand-ok text-white shadow-sm hover:opacity-90 disabled:opacity-70",
+};
+
+const SIZE_CLASSES: Record<Size, string> = {
+  sm: "h-8 px-3 text-xs gap-1",
+  md: "h-10 px-4 text-sm gap-1.5",
 };
 
 interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   variant?: Variant;
+  size?: Size;
 }
 
 export const Button = forwardRef<HTMLButtonElement, ButtonProps>(function Button(
-  { className = "", variant = "primary", ...props },
+  { className = "", variant = "primary", size = "md", ...props },
   ref
 ) {
   return (
     <button
       ref={ref}
-      className={`inline-flex h-10 items-center justify-center gap-1.5 rounded-lg px-4 text-sm font-medium transition-colors disabled:cursor-not-allowed ${VARIANT_CLASSES[variant]} ${className}`}
+      className={`inline-flex items-center justify-center rounded-lg font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary/30 disabled:cursor-not-allowed ${SIZE_CLASSES[size]} ${VARIANT_CLASSES[variant]} ${className}`}
       {...props}
     />
   );

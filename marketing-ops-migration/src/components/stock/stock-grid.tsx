@@ -4,7 +4,9 @@ import { useEffect, useMemo, useState } from "react";
 import { Plus } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { PageHeader } from "@/components/ui/page-header";
 import { ViewToggle, type ViewMode } from "@/components/ui/view-toggle";
+import { ErrorBanner } from "@/components/ui/error-banner";
 import { StockCardGrid } from "@/components/stock/stock-card-grid";
 import { StockListView } from "@/components/stock/stock-list-view";
 import { StockModal } from "@/components/stock/stock-modal";
@@ -69,17 +71,20 @@ export function StockGrid({ initialItems }: { initialItems: StockItemDTO[] }) {
 
   return (
     <div className="space-y-4">
-      <div className="flex flex-wrap items-center justify-between gap-3">
-        <h1 className="text-xl font-semibold text-zinc-900 dark:text-zinc-50">Estoque</h1>
-        <Button
-          onClick={() => {
-            setEditing(undefined);
-            setShowModal(true);
-          }}
-        >
-          <Plus size={16} /> Novo item
-        </Button>
-      </div>
+      <PageHeader
+        title="Estoque"
+        description="Itens cadastrados, saldos e localização física"
+        actions={
+          <Button
+            onClick={() => {
+              setEditing(undefined);
+              setShowModal(true);
+            }}
+          >
+            <Plus size={16} /> Novo item
+          </Button>
+        }
+      />
 
       <div className="flex flex-wrap items-center justify-between gap-3">
         <Input
@@ -91,11 +96,7 @@ export function StockGrid({ initialItems }: { initialItems: StockItemDTO[] }) {
         <ViewToggle view={view} onChange={changeView} />
       </div>
 
-      {error && (
-        <p className="rounded-lg bg-red-50 px-3 py-2 text-sm text-red-700 dark:bg-red-950 dark:text-red-400">
-          {error}
-        </p>
-      )}
+      {error && <ErrorBanner message={error} />}
 
       {view === "grid" ? (
         <StockCardGrid items={filtered} onEdit={openEdit} onDelete={handleDelete} deletingId={deletingId} />

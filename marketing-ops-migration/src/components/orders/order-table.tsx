@@ -7,6 +7,9 @@ import { Input } from "@/components/ui/input";
 import { Select } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { ErrorBanner } from "@/components/ui/error-banner";
+import { PageHeader } from "@/components/ui/page-header";
+import { EmptyState } from "@/components/ui/empty-state";
 import { OrderModal } from "@/components/orders/order-modal";
 import { ORDER_STATUS_VALUES, ORDER_STATUS_LABEL, ORDER_STATUS_COLOR } from "@/lib/order-status";
 import { matchesSearch } from "@/lib/search";
@@ -100,17 +103,20 @@ export function OrderTable({ initialOrders, stock }: { initialOrders: OrderDTO[]
 
   return (
     <div className="space-y-4">
-      <div className="flex flex-wrap items-center justify-between gap-3">
-        <h1 className="text-xl font-semibold text-zinc-900 dark:text-zinc-50">Pedidos de Compra</h1>
-        <Button
-          onClick={() => {
-            setEditing(undefined);
-            setShowModal(true);
-          }}
-        >
-          <Plus size={16} /> Novo pedido
-        </Button>
-      </div>
+      <PageHeader
+        title="Pedidos de Compra"
+        description="Ordens de compra vinculadas ao estoque"
+        actions={
+          <Button
+            onClick={() => {
+              setEditing(undefined);
+              setShowModal(true);
+            }}
+          >
+            <Plus size={16} /> Novo pedido
+          </Button>
+        }
+      />
 
       <div className="flex flex-wrap gap-3">
         <Input
@@ -133,26 +139,24 @@ export function OrderTable({ initialOrders, stock }: { initialOrders: OrderDTO[]
         </Select>
       </div>
 
-      {error && (
-        <p className="rounded-lg bg-red-50 px-3 py-2 text-sm text-red-700 dark:bg-red-950 dark:text-red-400">
-          {error}
-        </p>
-      )}
+      {error && <ErrorBanner message={error} />}
 
       <Card className="overflow-x-auto p-0">
         <table className="w-full text-sm">
-          <thead className="bg-zinc-50 dark:bg-zinc-800/50">
+          <thead className="bg-zinc-50 dark:bg-zinc-900/60">
             <tr>
               {COLUMNS.map((col) => (
                 <th
                   key={col.key}
                   onClick={() => toggleSort(col.key)}
-                  className="cursor-pointer select-none whitespace-nowrap px-3 py-2 text-left text-xs font-medium text-zinc-500 dark:text-zinc-400"
+                  className={`cursor-pointer select-none whitespace-nowrap px-3 py-2.5 text-xs font-medium uppercase tracking-wide text-zinc-500 dark:text-zinc-400 ${
+                    col.key === "quantity" ? "text-right" : "text-left"
+                  }`}
                 >
                   {col.label} {sortKey === col.key ? (sortDir === "asc" ? "↑" : "↓") : ""}
                 </th>
               ))}
-              <th className="px-3 py-2" />
+              <th className="px-3 py-2.5" />
             </tr>
           </thead>
           <tbody>
@@ -162,10 +166,10 @@ export function OrderTable({ initialOrders, stock }: { initialOrders: OrderDTO[]
               return (
                 <tr
                   key={o.id}
-                  className={`border-t border-zinc-100 dark:border-zinc-800 ${atrasado ? "bg-red-500/5" : ""}`}
+                  className={`border-t border-zinc-100 transition-colors hover:bg-zinc-50 dark:border-zinc-800 dark:hover:bg-zinc-900/40 ${atrasado ? "bg-red-500/5" : ""}`}
                 >
-                  <td className="px-3 py-2.5 text-zinc-900 dark:text-zinc-50">{o.stockItem.name}</td>
-                  <td className="px-3 py-2.5 text-zinc-500 dark:text-zinc-400">{o.quantity}</td>
+                  <td className="px-3 py-2.5 font-medium text-zinc-900 dark:text-zinc-50">{o.stockItem.name}</td>
+                  <td className="px-3 py-2.5 text-right tabular-nums text-zinc-500 dark:text-zinc-400">{o.quantity}</td>
                   <td className="px-3 py-2.5 text-zinc-500 dark:text-zinc-400">{o.ocNumber}</td>
                   <td className="px-3 py-2.5 text-zinc-500 dark:text-zinc-400">{o.project}</td>
                   <td className="px-3 py-2.5">
@@ -207,8 +211,8 @@ export function OrderTable({ initialOrders, stock }: { initialOrders: OrderDTO[]
             })}
             {filtered.length === 0 && (
               <tr>
-                <td colSpan={COLUMNS.length + 1} className="py-8 text-center text-sm text-zinc-500 dark:text-zinc-400">
-                  Nenhum pedido encontrado.
+                <td colSpan={COLUMNS.length + 1} className="py-2">
+                  <EmptyState message="Nenhum pedido encontrado." />
                 </td>
               </tr>
             )}

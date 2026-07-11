@@ -7,6 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Select } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
 import { SaveButton, type SaveStatus } from "@/components/ui/save-button";
+import { ErrorBanner } from "@/components/ui/error-banner";
 import type { StockOptionDTO } from "@/types/movement";
 
 interface KitLine {
@@ -62,11 +63,7 @@ export function KitModal({
   return (
     <Modal title="Novo kit" onClose={onClose} wide>
       <form onSubmit={handleSubmit} className="space-y-4">
-        {error && (
-          <p className="rounded-lg bg-red-50 px-3 py-2 text-sm text-red-700 dark:bg-red-950 dark:text-red-400">
-            {error}
-          </p>
-        )}
+        {error && <ErrorBanner message={error} />}
 
         <Input label="Nome do kit" value={name} onChange={(e) => setName(e.target.value)} required autoFocus />
 

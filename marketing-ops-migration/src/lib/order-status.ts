@@ -1,3 +1,5 @@
+import { CHART_COLORS } from "@/lib/theme-colors";
+
 // Mapeamento entre o enum OrderStatus (Prisma) e os rótulos em português usados na UI,
 // portado 1:1 do protótipo (marketing-ops.jsx) para manter a mesma ordem e cores.
 export const ORDER_STATUS_VALUES = [
@@ -28,24 +30,15 @@ export const ORDER_STATUS_LABEL: Record<OrderStatusValue, string> = {
   CANCELADO: "Cancelado",
 };
 
-const SLATE = "#94A3B8";
-const { warn, accent, purple, ok, crit } = {
-  warn: "#D9A441",
-  accent: "#E86F3B",
-  purple: "#7C6FCB",
-  ok: "#1F9D6E",
-  crit: "#D6503F",
-};
-
 export const ORDER_STATUS_COLOR: Record<OrderStatusValue, string> = {
-  RASCUNHO: SLATE,
-  EM_ELABORACAO: SLATE,
-  AGUARDANDO_COTACAO: warn,
-  COTACAO_RECEBIDA: warn,
-  AGUARDANDO_EMISSAO_OC: accent,
-  PEDIDO_ENVIADO_FORNECEDOR: accent,
-  EM_PRODUCAO: purple,
-  EM_TRANSPORTE: purple,
-  ENTREGUE: ok,
-  CANCELADO: crit,
+  RASCUNHO: CHART_COLORS.slate,
+  EM_ELABORACAO: CHART_COLORS.slate,
+  AGUARDANDO_COTACAO: CHART_COLORS.warn,
+  COTACAO_RECEBIDA: CHART_COLORS.warn,
+  AGUARDANDO_EMISSAO_OC: CHART_COLORS.accent,
+  PEDIDO_ENVIADO_FORNECEDOR: CHART_COLORS.accent,
+  EM_PRODUCAO: CHART_COLORS.purple,
+  EM_TRANSPORTE: CHART_COLORS.purple,
+  ENTREGUE: CHART_COLORS.ok,
+  CANCELADO: CHART_COLORS.crit,
 };

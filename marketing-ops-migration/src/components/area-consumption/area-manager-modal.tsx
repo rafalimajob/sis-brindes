@@ -5,6 +5,7 @@ import { Pencil, Trash2, Check, X as XIcon } from "lucide-react";
 import { Modal } from "@/components/ui/modal";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { ErrorBanner } from "@/components/ui/error-banner";
 import type { AreaDTO } from "@/types/area";
 
 export function AreaManagerModal({
@@ -90,11 +91,7 @@ export function AreaManagerModal({
   return (
     <Modal title="Gerenciar áreas" onClose={onClose}>
       <div className="space-y-4">
-        {error && (
-          <p className="rounded-lg bg-red-50 px-3 py-2 text-sm text-red-700 dark:bg-red-950 dark:text-red-400">
-            {error}
-          </p>
-        )}
+        {error && <ErrorBanner message={error} />}
 
         <form onSubmit={handleAdd} className="flex items-end gap-2">
           <Input

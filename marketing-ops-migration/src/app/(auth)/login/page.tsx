@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { ErrorBanner } from "@/components/ui/error-banner";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -37,24 +38,14 @@ export default function LoginPage() {
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
       <div>
-        <h1 className="text-lg font-semibold text-zinc-900 dark:text-zinc-50">Entrar</h1>
-        <p className="text-sm text-zinc-500 dark:text-zinc-400">Marketing Ops</p>
+        <h1 className="text-xl font-semibold tracking-tight text-zinc-900 dark:text-zinc-50">Entrar</h1>
+        <p className="mt-0.5 text-sm text-zinc-500 dark:text-zinc-400">Acesse sua conta do Marketing Ops</p>
       </div>
 
-      {error && (
-        <p className="rounded-lg bg-red-50 px-3 py-2 text-sm text-red-700 dark:bg-red-950 dark:text-red-400">
-          {error}
-        </p>
-      )}
+      {error && <ErrorBanner message={error} />}
 
-      <div className="space-y-1.5">
-        <label className="text-sm font-medium text-zinc-700 dark:text-zinc-300">E-mail</label>
-        <Input type="email" value={email} onChange={(e) => setEmail(e.target.value)} required autoFocus />
-      </div>
-      <div className="space-y-1.5">
-        <label className="text-sm font-medium text-zinc-700 dark:text-zinc-300">Senha</label>
-        <Input type="password" value={password} onChange={(e) => setPassword(e.target.value)} required />
-      </div>
+      <Input label="E-mail" type="email" value={email} onChange={(e) => setEmail(e.target.value)} required autoFocus />
+      <Input label="Senha" type="password" value={password} onChange={(e) => setPassword(e.target.value)} required />
 
       <Button type="submit" disabled={loading} className="w-full">
         {loading ? "Entrando..." : "Entrar"}
@@ -62,7 +53,7 @@ export default function LoginPage() {
 
       <p className="text-center text-sm text-zinc-500 dark:text-zinc-400">
         Ainda não tem conta?{" "}
-        <Link href="/register" className="font-medium text-brand-primary hover:underline dark:text-blue-300">
+        <Link href="/register" className="font-medium text-brand-primary hover:underline">
           Cadastre-se
         </Link>
       </p>

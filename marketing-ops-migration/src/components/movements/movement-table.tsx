@@ -6,6 +6,8 @@ import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { DateRangeFilter, ALL_TIME_RANGE, isInRange } from "@/components/ui/date-range-filter";
+import { PageHeader } from "@/components/ui/page-header";
+import { EmptyState } from "@/components/ui/empty-state";
 import { MovementModal } from "@/components/movements/movement-modal";
 import { MOVEMENT_TYPE_LABEL } from "@/lib/movement-types";
 import { matchesSearch } from "@/lib/search";
@@ -46,12 +48,15 @@ export function MovementTable({
 
   return (
     <div className="space-y-4">
-      <div className="flex flex-wrap items-center justify-between gap-3">
-        <h1 className="text-xl font-semibold text-zinc-900 dark:text-zinc-50">Movimentações</h1>
-        <Button onClick={() => setShowModal(true)}>
-          <Plus size={16} /> Nova movimentação
-        </Button>
-      </div>
+      <PageHeader
+        title="Movimentações"
+        description="Histórico de entradas e saídas de estoque"
+        actions={
+          <Button onClick={() => setShowModal(true)}>
+            <Plus size={16} /> Nova movimentação
+          </Button>
+        }
+      />
 
       <div className="flex flex-wrap items-end justify-between gap-3">
         <Input
@@ -65,26 +70,29 @@ export function MovementTable({
 
       <Card className="overflow-x-auto p-0">
         <table className="w-full text-sm">
-          <thead className="bg-zinc-50 dark:bg-zinc-800/50">
+          <thead className="bg-zinc-50 dark:bg-zinc-900/60">
             <tr>
-              <th className="px-3 py-2 text-left text-xs font-medium text-zinc-500 dark:text-zinc-400">Data</th>
-              <th className="px-3 py-2 text-left text-xs font-medium text-zinc-500 dark:text-zinc-400">Tipo</th>
-              <th className="px-3 py-2 text-left text-xs font-medium text-zinc-500 dark:text-zinc-400">Item</th>
-              <th className="px-3 py-2 text-left text-xs font-medium text-zinc-500 dark:text-zinc-400">Quantidade</th>
-              <th className="px-3 py-2 text-left text-xs font-medium text-zinc-500 dark:text-zinc-400">Projeto/Campanha</th>
-              <th className="px-3 py-2 text-left text-xs font-medium text-zinc-500 dark:text-zinc-400">Responsável</th>
-              <th className="px-3 py-2 text-left text-xs font-medium text-zinc-500 dark:text-zinc-400">Observação</th>
+              <th className="px-3 py-2.5 text-left text-xs font-medium uppercase tracking-wide text-zinc-500 dark:text-zinc-400">Data</th>
+              <th className="px-3 py-2.5 text-left text-xs font-medium uppercase tracking-wide text-zinc-500 dark:text-zinc-400">Tipo</th>
+              <th className="px-3 py-2.5 text-left text-xs font-medium uppercase tracking-wide text-zinc-500 dark:text-zinc-400">Item</th>
+              <th className="px-3 py-2.5 text-right text-xs font-medium uppercase tracking-wide text-zinc-500 dark:text-zinc-400">Quantidade</th>
+              <th className="px-3 py-2.5 text-left text-xs font-medium uppercase tracking-wide text-zinc-500 dark:text-zinc-400">Projeto/Campanha</th>
+              <th className="px-3 py-2.5 text-left text-xs font-medium uppercase tracking-wide text-zinc-500 dark:text-zinc-400">Responsável</th>
+              <th className="px-3 py-2.5 text-left text-xs font-medium uppercase tracking-wide text-zinc-500 dark:text-zinc-400">Observação</th>
             </tr>
           </thead>
           <tbody>
             {filtered.map((m) => {
               const signed = m.direction === "ENTRADA" ? m.quantity : -m.quantity;
               return (
-                <tr key={m.id} className="border-t border-zinc-100 dark:border-zinc-800">
+                <tr
+                  key={m.id}
+                  className="border-t border-zinc-100 transition-colors hover:bg-zinc-50 dark:border-zinc-800 dark:hover:bg-zinc-900/40"
+                >
                   <td className="px-3 py-2.5 text-zinc-500 dark:text-zinc-400">{fmtDateTime(m.date)}</td>
                   <td className="px-3 py-2.5 text-zinc-900 dark:text-zinc-50">{MOVEMENT_TYPE_LABEL[m.type]}</td>
-                  <td className="px-3 py-2.5 text-zinc-900 dark:text-zinc-50">{m.stockItem.name}</td>
-                  <td className={`px-3 py-2.5 font-medium ${signed > 0 ? "text-brand-ok" : "text-brand-crit"}`}>
+                  <td className="px-3 py-2.5 font-medium text-zinc-900 dark:text-zinc-50">{m.stockItem.name}</td>
+                  <td className={`px-3 py-2.5 text-right tabular-nums font-medium ${signed > 0 ? "text-brand-ok" : "text-brand-crit"}`}>
                     {signed > 0 ? "+" : ""}
                     {signed}
                   </td>
@@ -96,10 +104,14 @@ export function MovementTable({
             })}
             {filtered.length === 0 && (
               <tr>
-                <td colSpan={7} className="py-8 text-center text-sm text-zinc-500 dark:text-zinc-400">
-                  {movements.length === 0
-                    ? "Nenhuma movimentação registrada."
-                    : "Nenhuma movimentação encontrada para os filtros selecionados."}
+                <td colSpan={7} className="py-2">
+                  <EmptyState
+                    message={
+                      movements.length === 0
+                        ? "Nenhuma movimentação registrada."
+                        : "Nenhuma movimentação encontrada para os filtros selecionados."
+                    }
+                  />
                 </td>
               </tr>
             )}

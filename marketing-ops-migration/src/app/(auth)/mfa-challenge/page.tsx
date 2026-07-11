@@ -5,6 +5,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { signIn } from "next-auth/react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { ErrorBanner } from "@/components/ui/error-banner";
 
 function MfaChallengeInner() {
   const router = useRouter();
@@ -42,35 +43,30 @@ function MfaChallengeInner() {
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
       <div>
-        <h1 className="text-lg font-semibold text-zinc-900 dark:text-zinc-50">Verificação em duas etapas</h1>
-        <p className="text-sm text-zinc-500 dark:text-zinc-400">
+        <h1 className="text-xl font-semibold tracking-tight text-zinc-900 dark:text-zinc-50">
+          Verificação em duas etapas
+        </h1>
+        <p className="mt-0.5 text-sm text-zinc-500 dark:text-zinc-400">
           {useBackupCode
             ? "Digite um dos seus códigos de backup."
             : "Digite o código de 6 dígitos do seu app autenticador."}
         </p>
       </div>
 
-      {error && (
-        <p className="rounded-lg bg-red-50 px-3 py-2 text-sm text-red-700 dark:bg-red-950 dark:text-red-400">
-          {error}
-        </p>
-      )}
+      {error && <ErrorBanner message={error} />}
 
-      <div className="space-y-1.5">
-        <label className="text-sm font-medium text-zinc-700 dark:text-zinc-300">
-          {useBackupCode ? "Código de backup" : "Código de 6 dígitos"}
-        </label>
-        <Input
-          value={code}
-          onChange={(e) =>
-            setCode(useBackupCode ? e.target.value.toUpperCase() : e.target.value.replace(/\D/g, "").slice(0, 6))
-          }
-          inputMode={useBackupCode ? "text" : "numeric"}
-          maxLength={useBackupCode ? 11 : 6}
-          required
-          autoFocus
-        />
-      </div>
+      <Input
+        label={useBackupCode ? "Código de backup" : "Código de 6 dígitos"}
+        value={code}
+        onChange={(e) =>
+          setCode(useBackupCode ? e.target.value.toUpperCase() : e.target.value.replace(/\D/g, "").slice(0, 6))
+        }
+        inputMode={useBackupCode ? "text" : "numeric"}
+        maxLength={useBackupCode ? 11 : 6}
+        className={useBackupCode ? undefined : "text-center font-mono text-lg tracking-[0.4em]"}
+        required
+        autoFocus
+      />
 
       <Button type="submit" disabled={loading || !code} className="w-full">
         {loading ? "Verificando..." : "Entrar"}
@@ -83,7 +79,7 @@ function MfaChallengeInner() {
           setCode("");
           setError(null);
         }}
-        className="w-full text-center text-sm font-medium text-brand-primary hover:underline dark:text-blue-300"
+        className="w-full text-center text-sm font-medium text-brand-primary hover:underline"
       >
         {useBackupCode ? "Usar código do autenticador" : "Usar um código de backup"}
       </button>

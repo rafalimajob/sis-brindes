@@ -6,6 +6,7 @@ import { signIn } from "next-auth/react";
 import Image from "next/image";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { ErrorBanner } from "@/components/ui/error-banner";
 
 type Step = "loading" | "scan" | "backup-codes" | "error";
 
@@ -80,11 +81,7 @@ function MfaSetupInner() {
   }
 
   if (!bootstrapTicket) {
-    return (
-      <p className="rounded-lg bg-red-50 px-3 py-2 text-center text-sm text-red-700 dark:bg-red-950 dark:text-red-400">
-        Sessão de login expirada. Volte e entre novamente.
-      </p>
-    );
+    return <ErrorBanner message="Sessão de login expirada. Volte e entre novamente." />;
   }
 
   if (step === "loading") {
@@ -92,25 +89,27 @@ function MfaSetupInner() {
   }
 
   if (step === "error") {
-    return <p className="rounded-lg bg-red-50 px-3 py-2 text-center text-sm text-red-700 dark:bg-red-950 dark:text-red-400">{error}</p>;
+    return <ErrorBanner message={error ?? "Erro inesperado."} />;
   }
 
   if (step === "backup-codes") {
     return (
       <div className="space-y-4">
         <div>
-          <h1 className="text-lg font-semibold text-zinc-900 dark:text-zinc-50">Guarde seus códigos de backup</h1>
-          <p className="text-sm text-zinc-500 dark:text-zinc-400">
+          <h1 className="text-xl font-semibold tracking-tight text-zinc-900 dark:text-zinc-50">
+            Guarde seus códigos de backup
+          </h1>
+          <p className="mt-0.5 text-sm text-zinc-500 dark:text-zinc-400">
             Use um destes códigos se perder acesso ao seu app autenticador. Cada um só funciona uma vez —
             eles não serão exibidos de novo.
           </p>
         </div>
-        <div className="grid grid-cols-2 gap-2 rounded-lg bg-zinc-50 p-4 font-mono text-sm text-zinc-800 dark:bg-zinc-800/60 dark:text-zinc-100">
+        <div className="grid grid-cols-2 gap-2 rounded-lg border border-zinc-200 bg-zinc-50 p-4 font-mono text-sm tracking-wide text-zinc-800 dark:border-zinc-800 dark:bg-zinc-800/60 dark:text-zinc-100">
           {backupCodes.map((c) => (
             <span key={c}>{c}</span>
           ))}
         </div>
-        {error && <p className="text-sm text-red-600 dark:text-red-400">{error}</p>}
+        {error && <ErrorBanner message={error} />}
         <Button onClick={handleFinish} disabled={finishing} className="w-full">
           {finishing ? "Entrando..." : "Já salvei meus códigos, continuar"}
         </Button>
@@ -121,43 +120,40 @@ function MfaSetupInner() {
   return (
     <form onSubmit={handleConfirm} className="space-y-4">
       <div>
-        <h1 className="text-lg font-semibold text-zinc-900 dark:text-zinc-50">Configure o autenticador</h1>
-        <p className="text-sm text-zinc-500 dark:text-zinc-400">
+        <h1 className="text-xl font-semibold tracking-tight text-zinc-900 dark:text-zinc-50">
+          Configure o autenticador
+        </h1>
+        <p className="mt-0.5 text-sm text-zinc-500 dark:text-zinc-400">
           Escaneie o QR code com o Google Authenticator, Authy ou similar.
         </p>
       </div>
 
       {qrCodeDataUrl && (
-        <div className="flex justify-center rounded-lg bg-white p-3">
+        <div className="flex justify-center rounded-lg border border-zinc-200 bg-white p-3 dark:border-zinc-800">
           <Image src={qrCodeDataUrl} alt="QR code para configurar o MFA" width={180} height={180} unoptimized />
         </div>
       )}
 
       <div className="space-y-1">
         <p className="text-xs text-zinc-500 dark:text-zinc-400">Ou digite manualmente:</p>
-        <code className="block break-all rounded-lg bg-zinc-50 px-3 py-2 text-xs text-zinc-700 dark:bg-zinc-800/60 dark:text-zinc-200">
+        <code className="block break-all rounded-lg border border-zinc-200 bg-zinc-50 px-3 py-2 text-xs text-zinc-700 dark:border-zinc-800 dark:bg-zinc-800/60 dark:text-zinc-200">
           {manualEntryKey}
         </code>
       </div>
 
-      {error && (
-        <p className="rounded-lg bg-red-50 px-3 py-2 text-sm text-red-700 dark:bg-red-950 dark:text-red-400">
-          {error}
-        </p>
-      )}
+      {error && <ErrorBanner message={error} />}
 
-      <div className="space-y-1.5">
-        <label className="text-sm font-medium text-zinc-700 dark:text-zinc-300">Código de 6 dígitos</label>
-        <Input
-          value={code}
-          onChange={(e) => setCode(e.target.value.replace(/\D/g, "").slice(0, 6))}
-          inputMode="numeric"
-          pattern="\d{6}"
-          maxLength={6}
-          required
-          autoFocus
-        />
-      </div>
+      <Input
+        label="Código de 6 dígitos"
+        value={code}
+        onChange={(e) => setCode(e.target.value.replace(/\D/g, "").slice(0, 6))}
+        inputMode="numeric"
+        pattern="\d{6}"
+        maxLength={6}
+        className="text-center font-mono text-lg tracking-[0.4em]"
+        required
+        autoFocus
+      />
 
       <Button type="submit" disabled={submitting || code.length !== 6} className="w-full">
         {submitting ? "Confirmando..." : "Confirmar e ativar MFA"}

@@ -78,11 +78,21 @@ export function DateRangeFilter({ value, onChange }: { value: DateRange; onChang
         className="w-auto"
       />
       <div className="flex flex-wrap gap-1.5 pb-0.5">
-        {PRESETS.map((p) => (
-          <Button key={p.label} type="button" variant="secondary" className="h-8 px-3 text-xs" onClick={() => onChange(p.range())}>
-            {p.label}
-          </Button>
-        ))}
+        {PRESETS.map((p) => {
+          const presetRange = p.range();
+          const active = presetRange.from === value.from && presetRange.to === value.to;
+          return (
+            <Button
+              key={p.label}
+              type="button"
+              variant={active ? "primary" : "secondary"}
+              size="sm"
+              onClick={() => onChange(p.range())}
+            >
+              {p.label}
+            </Button>
+          );
+        })}
       </div>
     </div>
   );

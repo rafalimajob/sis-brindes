@@ -16,31 +16,34 @@ export function Header() {
         <input
           type="search"
           placeholder="Pesquisar pedidos, itens, kits..."
-          className="w-full rounded-lg border border-zinc-200 bg-zinc-50 py-1.5 pl-9 pr-3 text-sm text-zinc-900 outline-none placeholder:text-zinc-400 focus:border-brand-primary focus:ring-2 focus:ring-brand-primary/20 dark:border-zinc-800 dark:bg-zinc-900 dark:text-zinc-50"
+          className="w-full rounded-lg border border-zinc-200 bg-zinc-50 py-1.5 pl-9 pr-3 text-sm text-zinc-900 outline-none transition-colors placeholder:text-zinc-400 hover:border-zinc-300 focus:border-brand-primary focus:bg-white focus:ring-2 focus:ring-brand-primary/20 dark:border-zinc-800 dark:bg-zinc-900 dark:text-zinc-50 dark:hover:border-zinc-700 dark:focus:bg-zinc-900"
         />
       </div>
 
-      <div className="flex items-center gap-2">
+      <div className="flex items-center gap-1.5">
         <ThemeToggle />
 
         <div className="relative">
           <button
             type="button"
             onClick={() => setMenuOpen((v) => !v)}
-            className="flex h-9 w-9 items-center justify-center rounded-full bg-brand-primary text-sm font-medium text-white"
+            className="flex h-9 w-9 items-center justify-center rounded-full bg-brand-solid text-sm font-medium text-white ring-2 ring-transparent transition-shadow hover:ring-zinc-200 dark:hover:ring-zinc-800"
           >
             {session?.user?.name?.[0]?.toUpperCase() ?? "?"}
           </button>
 
           {menuOpen && (
-            <div className="absolute right-0 mt-2 w-48 rounded-lg border border-zinc-200 bg-white p-1 shadow-lg dark:border-zinc-800 dark:bg-zinc-900">
-              <div className="truncate px-3 py-2 text-sm text-zinc-500 dark:text-zinc-400">
-                {session?.user?.email}
+            <div className="animate-modal-in absolute right-0 mt-2 w-56 rounded-xl border border-zinc-200 bg-white p-1 shadow-xl dark:border-zinc-800 dark:bg-zinc-900">
+              <div className="border-b border-zinc-100 px-3 py-2.5 dark:border-zinc-800">
+                <div className="truncate text-sm font-medium text-zinc-900 dark:text-zinc-50">
+                  {session?.user?.name ?? "Usuário"}
+                </div>
+                <div className="truncate text-xs text-zinc-500 dark:text-zinc-400">{session?.user?.email}</div>
               </div>
               <button
                 type="button"
                 onClick={() => signOut({ callbackUrl: "/login" })}
-                className="flex w-full items-center gap-2 rounded-md px-3 py-2 text-left text-sm text-zinc-700 hover:bg-zinc-100 dark:text-zinc-300 dark:hover:bg-zinc-800"
+                className="mt-1 flex w-full items-center gap-2 rounded-md px-3 py-2 text-left text-sm text-zinc-700 transition-colors hover:bg-zinc-100 dark:text-zinc-300 dark:hover:bg-zinc-800"
               >
                 <LogOut size={16} />
                 Sair

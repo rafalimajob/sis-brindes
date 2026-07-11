@@ -5,6 +5,7 @@ import { Modal } from "@/components/ui/modal";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { SaveButton, type SaveStatus } from "@/components/ui/save-button";
+import { ErrorBanner } from "@/components/ui/error-banner";
 import type { StockItemDTO, StockItemFormValues } from "@/types/stock";
 
 const CATEGORIES = ["Brindes", "Materiais Gráficos", "Camisetas", "Kits", "Outros"];
@@ -63,11 +64,7 @@ export function StockModal({
   return (
     <Modal title={item ? "Editar item de estoque" : "Novo item de estoque"} onClose={onClose} wide>
       <form onSubmit={handleSubmit} className="space-y-4">
-        {error && (
-          <p className="rounded-lg bg-red-50 px-3 py-2 text-sm text-red-700 dark:bg-red-950 dark:text-red-400">
-            {error}
-          </p>
-        )}
+        {error && <ErrorBanner message={error} />}
         <div className="grid gap-3 sm:grid-cols-2">
           <Input label="Nome" value={form.name} onChange={(e) => set("name", e.target.value)} required autoFocus />
 

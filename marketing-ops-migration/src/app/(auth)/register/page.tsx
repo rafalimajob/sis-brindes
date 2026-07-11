@@ -4,6 +4,7 @@ import { useState, FormEvent } from "react";
 import Link from "next/link";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { ErrorBanner } from "@/components/ui/error-banner";
 
 export default function RegisterPage() {
   const [name, setName] = useState("");
@@ -36,12 +37,12 @@ export default function RegisterPage() {
   if (done) {
     return (
       <div className="space-y-3 text-center">
-        <h1 className="text-lg font-semibold text-zinc-900 dark:text-zinc-50">Confira seu e-mail</h1>
+        <h1 className="text-xl font-semibold tracking-tight text-zinc-900 dark:text-zinc-50">Confira seu e-mail</h1>
         <p className="text-sm text-zinc-600 dark:text-zinc-400">
           Enviamos um link de confirmação para <strong>{email}</strong>. Em ambiente de
           desenvolvimento, o link aparece no console do servidor (terminal do <code>npm run dev</code>).
         </p>
-        <Link href="/login" className="text-sm font-medium text-brand-primary hover:underline dark:text-blue-300">
+        <Link href="/login" className="text-sm font-medium text-brand-primary hover:underline">
           Voltar para o login
         </Link>
       </div>
@@ -51,27 +52,17 @@ export default function RegisterPage() {
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
       <div>
-        <h1 className="text-lg font-semibold text-zinc-900 dark:text-zinc-50">Criar conta</h1>
-        <p className="text-sm text-zinc-500 dark:text-zinc-400">Marketing Ops</p>
+        <h1 className="text-xl font-semibold tracking-tight text-zinc-900 dark:text-zinc-50">Criar conta</h1>
+        <p className="mt-0.5 text-sm text-zinc-500 dark:text-zinc-400">Cadastre-se no Marketing Ops</p>
       </div>
 
-      {error && (
-        <p className="rounded-lg bg-red-50 px-3 py-2 text-sm text-red-700 dark:bg-red-950 dark:text-red-400">
-          {error}
-        </p>
-      )}
+      {error && <ErrorBanner message={error} />}
 
+      <Input label="Nome" value={name} onChange={(e) => setName(e.target.value)} required autoFocus />
+      <Input label="E-mail" type="email" value={email} onChange={(e) => setEmail(e.target.value)} required />
       <div className="space-y-1.5">
-        <label className="text-sm font-medium text-zinc-700 dark:text-zinc-300">Nome</label>
-        <Input value={name} onChange={(e) => setName(e.target.value)} required autoFocus />
-      </div>
-      <div className="space-y-1.5">
-        <label className="text-sm font-medium text-zinc-700 dark:text-zinc-300">E-mail</label>
-        <Input type="email" value={email} onChange={(e) => setEmail(e.target.value)} required />
-      </div>
-      <div className="space-y-1.5">
-        <label className="text-sm font-medium text-zinc-700 dark:text-zinc-300">Senha</label>
         <Input
+          label="Senha"
           type="password"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
@@ -87,7 +78,7 @@ export default function RegisterPage() {
 
       <p className="text-center text-sm text-zinc-500 dark:text-zinc-400">
         Já tem uma conta?{" "}
-        <Link href="/login" className="font-medium text-brand-primary hover:underline dark:text-blue-300">
+        <Link href="/login" className="font-medium text-brand-primary hover:underline">
           Entrar
         </Link>
       </p>

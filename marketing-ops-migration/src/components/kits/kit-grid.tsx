@@ -4,6 +4,9 @@ import { useState } from "react";
 import { Plus, Trash2 } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { ErrorBanner } from "@/components/ui/error-banner";
+import { PageHeader } from "@/components/ui/page-header";
+import { EmptyState } from "@/components/ui/empty-state";
 import { KitModal } from "@/components/kits/kit-modal";
 import { KitOutputModal } from "@/components/kits/kit-output-modal";
 import type { KitDTO } from "@/types/kit";
@@ -39,35 +42,34 @@ export function KitGrid({ initialKits, stock }: { initialKits: KitDTO[]; stock: 
 
   return (
     <div className="space-y-4">
-      <div className="flex items-center justify-between">
-        <h1 className="text-xl font-semibold text-zinc-900 dark:text-zinc-50">Kits</h1>
-        <Button onClick={() => setShowModal(true)}>
-          <Plus size={16} /> Novo kit
-        </Button>
-      </div>
+      <PageHeader
+        title="Kits"
+        description="Conjuntos de itens para saída rápida em eventos e campanhas"
+        actions={
+          <Button onClick={() => setShowModal(true)}>
+            <Plus size={16} /> Novo kit
+          </Button>
+        }
+      />
 
-      {error && (
-        <p className="rounded-lg bg-red-50 px-3 py-2 text-sm text-red-700 dark:bg-red-950 dark:text-red-400">
-          {error}
-        </p>
-      )}
+      {error && <ErrorBanner message={error} />}
 
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
         {kits.map((k) => (
-          <Card key={k.id}>
-            <div className="mb-2 flex items-start justify-between">
+          <Card key={k.id} className="flex flex-col transition-shadow hover:shadow-md">
+            <div className="mb-2 flex items-start justify-between gap-2">
               <div className="font-medium text-zinc-900 dark:text-zinc-50">{k.name}</div>
               <button
                 type="button"
                 onClick={() => handleDelete(k)}
                 disabled={deletingId === k.id}
-                className="text-brand-crit hover:opacity-70 disabled:opacity-40"
+                className="shrink-0 text-brand-crit hover:opacity-70 disabled:opacity-40"
                 aria-label="Excluir kit"
               >
                 <Trash2 size={14} />
               </button>
             </div>
-            <ul className="mb-3 space-y-1 text-sm text-zinc-600 dark:text-zinc-400">
+            <ul className="mb-4 flex-1 space-y-1 text-sm text-zinc-600 dark:text-zinc-400">
               {k.items.map((ci) => (
                 <li key={ci.id}>
                   {ci.quantity}x {ci.stockItem.name}
@@ -79,7 +81,11 @@ export function KitGrid({ initialKits, stock }: { initialKits: KitDTO[]; stock: 
             </Button>
           </Card>
         ))}
-        {kits.length === 0 && <p className="text-sm text-zinc-500 dark:text-zinc-400">Nenhum kit cadastrado.</p>}
+        {kits.length === 0 && (
+          <div className="sm:col-span-2 lg:col-span-3">
+            <EmptyState message="Nenhum kit cadastrado." />
+          </div>
+        )}
       </div>
 
       {showModal && <KitModal stock={stock} onClose={() => setShowModal(false)} onSaved={refresh} />}

@@ -1,10 +1,43 @@
 "use client";
 
-import { BarChart, Bar, LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid, Cell } from "recharts";
+import {
+  BarChart,
+  Bar,
+  LineChart,
+  Line,
+  XAxis,
+  YAxis,
+  Tooltip,
+  ResponsiveContainer,
+  CartesianGrid,
+  Cell,
+  type TooltipContentProps,
+} from "recharts";
+import type { ValueType, NameType } from "recharts/types/component/DefaultTooltipContent";
 import { Card } from "@/components/ui/card";
+import { CHART_COLORS } from "@/lib/theme-colors";
 
-const PRIMARY = "#3E4C6E";
-const ACCENT = "#E86F3B";
+const AXIS_TICK = { fontSize: 11, fill: "#94A3B8" };
+
+function ChartTooltip({
+  active,
+  payload,
+  label,
+  valueFormatter,
+}: TooltipContentProps<ValueType, NameType> & { valueFormatter?: (value: number) => string }) {
+  if (!active || !payload?.length) return null;
+  return (
+    <div className="rounded-lg border border-zinc-200 bg-white px-3 py-2 text-xs shadow-lg dark:border-zinc-700 dark:bg-zinc-900">
+      {label != null && <div className="mb-1 font-medium text-zinc-700 dark:text-zinc-300">{label}</div>}
+      {payload.map((p, i) => (
+        <div key={i} className="flex items-center gap-1.5 text-zinc-600 dark:text-zinc-400">
+          <span className="h-1.5 w-1.5 shrink-0 rounded-full" style={{ backgroundColor: (p.color ?? p.fill) as string }} />
+          {valueFormatter ? valueFormatter(Number(p.value)) : String(p.value)}
+        </div>
+      ))}
+    </div>
+  );
+}
 
 export function StatusBarChart({ data }: { data: { status: string; label: string; count: number; color: string }[] }) {
   return (
@@ -13,9 +46,9 @@ export function StatusBarChart({ data }: { data: { status: string; label: string
       <ResponsiveContainer width="100%" height={220}>
         <BarChart data={data} layout="vertical" margin={{ left: 10 }}>
           <XAxis type="number" hide />
-          <YAxis type="category" dataKey="label" width={140} tick={{ fontSize: 11 }} />
-          <Tooltip />
-          <Bar dataKey="count" radius={[0, 6, 6, 0]}>
+          <YAxis type="category" dataKey="label" width={140} tick={AXIS_TICK} axisLine={false} tickLine={false} />
+          <Tooltip content={(props) => <ChartTooltip {...props} />} cursor={{ fill: "rgba(148, 163, 184, 0.08)" }} />
+          <Bar dataKey="count" radius={[0, 6, 6, 0]} maxBarSize={22}>
             {data.map((d) => (
               <Cell key={d.status} fill={d.color} />
             ))}
@@ -34,11 +67,18 @@ export function OrdersEvolutionChart({ data }: { data: { month: string; pedidos:
       </div>
       <ResponsiveContainer width="100%" height={220}>
         <LineChart data={data}>
-          <CartesianGrid strokeDasharray="3 3" opacity={0.2} />
-          <XAxis dataKey="month" tick={{ fontSize: 11 }} />
-          <YAxis allowDecimals={false} tick={{ fontSize: 11 }} />
-          <Tooltip />
-          <Line type="monotone" dataKey="pedidos" stroke={PRIMARY} strokeWidth={2} />
+          <CartesianGrid strokeDasharray="3 3" stroke="#94A3B8" opacity={0.15} vertical={false} />
+          <XAxis dataKey="month" tick={AXIS_TICK} axisLine={false} tickLine={false} />
+          <YAxis allowDecimals={false} tick={AXIS_TICK} axisLine={false} tickLine={false} width={32} />
+          <Tooltip content={(props) => <ChartTooltip {...props} />} cursor={{ stroke: "#94A3B8", strokeOpacity: 0.3 }} />
+          <Line
+            type="monotone"
+            dataKey="pedidos"
+            stroke={CHART_COLORS.primary}
+            strokeWidth={2}
+            dot={{ r: 3, fill: CHART_COLORS.primary, strokeWidth: 0 }}
+            activeDot={{ r: 5 }}
+          />
         </LineChart>
       </ResponsiveContainer>
     </Card>
@@ -59,10 +99,29 @@ export function ProjectConsumptionChart({
       <div className="mb-4 text-sm font-medium text-zinc-700 dark:text-zinc-300">{title}</div>
       <ResponsiveContainer width="100%" height={220}>
         <BarChart data={data}>
-          <XAxis dataKey="project" tick={{ fontSize: 10 }} interval={0} angle={-15} textAnchor="end" height={50} />
-          <YAxis tick={{ fontSize: 11 }} tickFormatter={valueFormatter} width={valueFormatter ? 64 : 60} />
-          <Tooltip formatter={valueFormatter ? (v) => valueFormatter(Number(v)) : undefined} />
-          <Bar dataKey="qty" fill={ACCENT} radius={[6, 6, 0, 0]} />
+          <CartesianGrid strokeDasharray="3 3" stroke="#94A3B8" opacity={0.15} vertical={false} />
+          <XAxis
+            dataKey="project"
+            tick={AXIS_TICK}
+            interval={0}
+            angle={-15}
+            textAnchor="end"
+            height={50}
+            axisLine={false}
+            tickLine={false}
+          />
+          <YAxis
+            tick={AXIS_TICK}
+            tickFormatter={valueFormatter}
+            width={valueFormatter ? 64 : 40}
+            axisLine={false}
+            tickLine={false}
+          />
+          <Tooltip
+            content={(props) => <ChartTooltip {...props} valueFormatter={valueFormatter} />}
+            cursor={{ fill: "rgba(148, 163, 184, 0.08)" }}
+          />
+          <Bar dataKey="qty" fill={CHART_COLORS.accent} radius={[6, 6, 0, 0]} maxBarSize={44} />
         </BarChart>
       </ResponsiveContainer>
     </Card>

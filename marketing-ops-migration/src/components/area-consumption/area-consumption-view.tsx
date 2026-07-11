@@ -10,13 +10,14 @@ import { StatCard } from "@/components/dashboard/stat-card";
 import { ProjectConsumptionChart } from "@/components/dashboard/dashboard-charts";
 import { AreaWithdrawalModal } from "@/components/area-consumption/area-withdrawal-modal";
 import { AreaManagerModal } from "@/components/area-consumption/area-manager-modal";
+import { PageHeader } from "@/components/ui/page-header";
+import { EmptyState } from "@/components/ui/empty-state";
 import { matchesSearch } from "@/lib/search";
+import { CHART_COLORS } from "@/lib/theme-colors";
 import type { AreaDTO } from "@/types/area";
 import type { MovementDTO, StockOptionDTO } from "@/types/movement";
 
-const PURPLE = "#7C6FCB";
-const PRIMARY = "#3E4C6E";
-const CRIT = "#D6503F";
+const { purple: PURPLE, primary: PRIMARY, crit: CRIT } = CHART_COLORS;
 
 const fmtDate = (iso: string) => new Date(iso).toLocaleDateString("pt-BR", { day: "2-digit", month: "2-digit", year: "numeric" });
 const fmtBRL = (n: number) => n.toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
@@ -80,22 +81,20 @@ export function AreaConsumptionView({
 
   return (
     <div className="space-y-6">
-      <div className="flex flex-wrap items-center justify-between gap-3">
-        <div>
-          <h1 className="text-xl font-semibold text-zinc-900 dark:text-zinc-50">Consumo por área</h1>
-          <p className="text-sm text-zinc-500 dark:text-zinc-400">
-            Retiradas de materiais realizadas pelas áreas da instituição
-          </p>
-        </div>
-        <div className="flex gap-2">
-          <Button variant="secondary" onClick={() => setShowManagerModal(true)}>
-            <Settings2 size={16} /> Gerenciar áreas
-          </Button>
-          <Button onClick={() => setShowWithdrawalModal(true)}>
-            <Plus size={16} /> Nova retirada
-          </Button>
-        </div>
-      </div>
+      <PageHeader
+        title="Consumo por área"
+        description="Retiradas de materiais realizadas pelas áreas da instituição"
+        actions={
+          <>
+            <Button variant="secondary" onClick={() => setShowManagerModal(true)}>
+              <Settings2 size={16} /> Gerenciar áreas
+            </Button>
+            <Button onClick={() => setShowWithdrawalModal(true)}>
+              <Plus size={16} /> Nova retirada
+            </Button>
+          </>
+        }
+      />
 
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
         <StatCard label="Retiradas no período" value={filtered.length} color={PRIMARY} icon={ArrowDownRight} />
@@ -128,37 +127,48 @@ export function AreaConsumptionView({
 
       <Card className="overflow-x-auto p-0">
         <table className="w-full text-sm">
-          <thead className="bg-zinc-50 dark:bg-zinc-800/50">
+          <thead className="bg-zinc-50 dark:bg-zinc-900/60">
             <tr>
-              <th className="px-3 py-2 text-left text-xs font-medium text-zinc-500 dark:text-zinc-400">Data</th>
-              <th className="px-3 py-2 text-left text-xs font-medium text-zinc-500 dark:text-zinc-400">Área</th>
-              <th className="px-3 py-2 text-left text-xs font-medium text-zinc-500 dark:text-zinc-400">Item</th>
-              <th className="px-3 py-2 text-left text-xs font-medium text-zinc-500 dark:text-zinc-400">Quantidade</th>
-              <th className="px-3 py-2 text-left text-xs font-medium text-zinc-500 dark:text-zinc-400">Custo unit.</th>
-              <th className="px-3 py-2 text-left text-xs font-medium text-zinc-500 dark:text-zinc-400">Valor total</th>
-              <th className="px-3 py-2 text-left text-xs font-medium text-zinc-500 dark:text-zinc-400">Responsável</th>
-              <th className="px-3 py-2 text-left text-xs font-medium text-zinc-500 dark:text-zinc-400">Observação</th>
+              <th className="px-3 py-2.5 text-left text-xs font-medium uppercase tracking-wide text-zinc-500 dark:text-zinc-400">Data</th>
+              <th className="px-3 py-2.5 text-left text-xs font-medium uppercase tracking-wide text-zinc-500 dark:text-zinc-400">Área</th>
+              <th className="px-3 py-2.5 text-left text-xs font-medium uppercase tracking-wide text-zinc-500 dark:text-zinc-400">Item</th>
+              <th className="px-3 py-2.5 text-right text-xs font-medium uppercase tracking-wide text-zinc-500 dark:text-zinc-400">Quantidade</th>
+              <th className="px-3 py-2.5 text-right text-xs font-medium uppercase tracking-wide text-zinc-500 dark:text-zinc-400">Custo unit.</th>
+              <th className="px-3 py-2.5 text-right text-xs font-medium uppercase tracking-wide text-zinc-500 dark:text-zinc-400">Valor total</th>
+              <th className="px-3 py-2.5 text-left text-xs font-medium uppercase tracking-wide text-zinc-500 dark:text-zinc-400">Responsável</th>
+              <th className="px-3 py-2.5 text-left text-xs font-medium uppercase tracking-wide text-zinc-500 dark:text-zinc-400">Observação</th>
             </tr>
           </thead>
           <tbody>
             {filtered.map((m) => (
-              <tr key={m.id} className="border-t border-zinc-100 dark:border-zinc-800">
+              <tr
+                key={m.id}
+                className="border-t border-zinc-100 transition-colors hover:bg-zinc-50 dark:border-zinc-800 dark:hover:bg-zinc-900/40"
+              >
                 <td className="px-3 py-2.5 text-zinc-500 dark:text-zinc-400">{fmtDate(m.date)}</td>
                 <td className="px-3 py-2.5 text-zinc-900 dark:text-zinc-50">{m.area?.name ?? "—"}</td>
-                <td className="px-3 py-2.5 text-zinc-900 dark:text-zinc-50">{m.stockItem.name}</td>
-                <td className="px-3 py-2.5 font-medium text-brand-crit">-{m.quantity}</td>
-                <td className="px-3 py-2.5 text-zinc-500 dark:text-zinc-400">{m.unitCost ? fmtBRL(Number(m.unitCost)) : "—"}</td>
-                <td className="px-3 py-2.5 text-zinc-700 dark:text-zinc-300">{m.totalCost ? fmtBRL(Number(m.totalCost)) : "—"}</td>
+                <td className="px-3 py-2.5 font-medium text-zinc-900 dark:text-zinc-50">{m.stockItem.name}</td>
+                <td className="px-3 py-2.5 text-right tabular-nums font-medium text-brand-crit">-{m.quantity}</td>
+                <td className="px-3 py-2.5 text-right tabular-nums text-zinc-500 dark:text-zinc-400">
+                  {m.unitCost ? fmtBRL(Number(m.unitCost)) : "—"}
+                </td>
+                <td className="px-3 py-2.5 text-right tabular-nums text-zinc-700 dark:text-zinc-300">
+                  {m.totalCost ? fmtBRL(Number(m.totalCost)) : "—"}
+                </td>
                 <td className="px-3 py-2.5 text-zinc-500 dark:text-zinc-400">{m.performedBy.name}</td>
                 <td className="px-3 py-2.5 text-zinc-500 dark:text-zinc-400">{m.notes ?? "—"}</td>
               </tr>
             ))}
             {filtered.length === 0 && (
               <tr>
-                <td colSpan={8} className="py-8 text-center text-sm text-zinc-500 dark:text-zinc-400">
-                  {withdrawals.length === 0
-                    ? "Nenhuma retirada registrada."
-                    : "Nenhuma retirada encontrada para os filtros selecionados."}
+                <td colSpan={8} className="py-2">
+                  <EmptyState
+                    message={
+                      withdrawals.length === 0
+                        ? "Nenhuma retirada registrada."
+                        : "Nenhuma retirada encontrada para os filtros selecionados."
+                    }
+                  />
                 </td>
               </tr>
             )}

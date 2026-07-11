@@ -35,7 +35,10 @@ export function Sidebar() {
         collapsed ? "w-16" : "w-60"
       }`}
     >
-      <div className="flex h-14 items-center gap-2 px-4">
+      <div className="flex h-14 items-center gap-2.5 px-4">
+        <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-md bg-brand-solid text-xs font-bold text-white">
+          M
+        </div>
         {!collapsed && (
           <span className="truncate text-sm font-semibold tracking-tight text-zinc-900 dark:text-zinc-50">
             Marketing Ops
@@ -43,7 +46,7 @@ export function Sidebar() {
         )}
       </div>
 
-      <nav className="flex-1 space-y-1 px-2">
+      <nav className="flex-1 space-y-0.5 px-2 pt-1">
         {NAV_ITEMS.map(({ href, label, icon: Icon }) => {
           const active = pathname === href || pathname.startsWith(`${href}/`);
           return (
@@ -51,12 +54,15 @@ export function Sidebar() {
               key={href}
               href={href}
               title={collapsed ? label : undefined}
-              className={`flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors ${
+              className={`relative flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors ${
                 active
-                  ? "bg-brand-primary/10 text-brand-primary dark:bg-brand-primary/20 dark:text-blue-300"
+                  ? "bg-brand-primary-subtle text-brand-primary"
                   : "text-zinc-600 hover:bg-zinc-100 hover:text-zinc-900 dark:text-zinc-400 dark:hover:bg-zinc-800 dark:hover:text-zinc-50"
               }`}
             >
+              {active && (
+                <span className="absolute left-0 top-1/2 h-4 w-0.5 -translate-y-1/2 rounded-full bg-brand-primary" />
+              )}
               <Icon size={18} className="shrink-0" />
               {!collapsed && <span className="truncate">{label}</span>}
             </Link>
@@ -68,7 +74,7 @@ export function Sidebar() {
         type="button"
         onClick={() => setCollapsed((v) => !v)}
         aria-label={collapsed ? "Expandir menu" : "Recolher menu"}
-        className="m-2 flex h-9 items-center justify-center rounded-lg text-zinc-500 hover:bg-zinc-100 hover:text-zinc-900 dark:text-zinc-400 dark:hover:bg-zinc-800 dark:hover:text-zinc-50"
+        className="m-2 flex h-9 items-center justify-center rounded-lg text-zinc-500 transition-colors hover:bg-zinc-100 hover:text-zinc-900 dark:text-zinc-400 dark:hover:bg-zinc-800 dark:hover:text-zinc-50"
       >
         {collapsed ? <ChevronsRight size={18} /> : <ChevronsLeft size={18} />}
       </button>

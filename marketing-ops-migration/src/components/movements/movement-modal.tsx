@@ -7,6 +7,7 @@ import { Select } from "@/components/ui/select";
 import { TextArea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { SaveButton, type SaveStatus } from "@/components/ui/save-button";
+import { ErrorBanner } from "@/components/ui/error-banner";
 import { ENTRADA_TYPES, SAIDA_TYPES, MOVEMENT_TYPE_LABEL } from "@/lib/movement-types";
 import type { MovementTypeValue } from "@/lib/movement-types";
 import type { StockOptionDTO } from "@/types/movement";
@@ -85,11 +86,7 @@ export function MovementModal({
           </button>
         </div>
 
-        {error && (
-          <p className="rounded-lg bg-red-50 px-3 py-2 text-sm text-red-700 dark:bg-red-950 dark:text-red-400">
-            {error}
-          </p>
-        )}
+        {error && <ErrorBanner message={error} />}
 
         <div className="grid gap-3">
           <Select label="Tipo" value={type} onChange={(e) => setType(e.target.value as MovementTypeValue)}>

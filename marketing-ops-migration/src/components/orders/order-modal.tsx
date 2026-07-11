@@ -9,6 +9,7 @@ import { TextArea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { SaveButton, type SaveStatus } from "@/components/ui/save-button";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
+import { ErrorBanner } from "@/components/ui/error-banner";
 import { ORDER_STATUS_VALUES, ORDER_STATUS_LABEL } from "@/lib/order-status";
 import type { OrderDTO, OrderFormValues, AttachmentDTO } from "@/types/order";
 import type { OrderStatusValue } from "@/lib/order-status";
@@ -155,11 +156,7 @@ export function OrderModal({
   return (
     <Modal title={currentOrder ? "Editar pedido" : "Novo pedido de compra"} onClose={onClose} wide>
       <form onSubmit={handleSubmit} className="space-y-4">
-        {error && (
-          <p className="rounded-lg bg-red-50 px-3 py-2 text-sm text-red-700 dark:bg-red-950 dark:text-red-400">
-            {error}
-          </p>
-        )}
+        {error && <ErrorBanner message={error} />}
 
         <div className="grid gap-3 sm:grid-cols-2">
           <Select

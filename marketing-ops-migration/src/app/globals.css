@@ -5,6 +5,14 @@
 :root {
   --background: #ffffff;
   --foreground: #171717;
+
+  /* Cor de marca (verde institucional #072928, paleta oficial em assets/cores.png)
+     — variantes por tema, ver bloco .dark abaixo. O tom escuro do modo claro
+     fica ilegível sobre fundo escuro, então o dark mode usa o verde vibrante
+     da mesma família (#00CC88) em vez de reaproveitar o mesmo hex nos dois temas. */
+  --brand-primary: #072928;
+  --brand-primary-hover: #0b6359;
+  --brand-primary-subtle: #e7f3f0;
 }
 
 @theme inline {
@@ -13,25 +21,39 @@
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
 
-  /* Paleta da marca, portada do protótipo (marketing-ops.jsx) */
-  --color-brand-primary: #3e4c6e;
-  --color-brand-primary-dark: #2a3350;
-  --color-brand-accent: #e86f3b;
+  /* Paleta oficial (assets/cores.png). Verde é a cor institucional principal;
+     roxo/azul/ciano vêm da mesma imagem e servem para diferenciar séries em
+     gráficos e status secundários — ok/warn/crit seguem convenção de UX
+     (sucesso/alerta/erro) e não fazem parte da paleta de marca. */
+  --color-brand-primary: var(--brand-primary);
+  --color-brand-primary-hover: var(--brand-primary-hover);
+  --color-brand-primary-subtle: var(--brand-primary-subtle);
+  --color-brand-primary-dark: #0b6359;
+  /* Fixo nos dois temas (não usa a variante clara do dark mode): para
+     preenchimentos sólidos com texto branco em cima (botão primário),
+     onde o contraste do próprio botão não depende do fundo da página. */
+  --color-brand-solid: #072928;
+  --color-brand-solid-hover: #0b6359;
+  --color-brand-accent: #00dbff;
   --color-brand-ok: #1f9d6e;
   --color-brand-warn: #d9a441;
   --color-brand-crit: #d6503f;
-  --color-brand-purple: #7c6fcb;
+  --color-brand-purple: #5f4af4;
 }
 
 .dark {
   --background: #0a0a0a;
   --foreground: #ededed;
+
+  --brand-primary: #00cc88;
+  --brand-primary-hover: #00ffb0;
+  --brand-primary-subtle: rgba(0, 204, 136, 0.14);
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-sans), Arial, Helvetica, sans-serif;
 }
 
 @keyframes check-pop {
@@ -51,4 +73,19 @@ body {
 
 .animate-check-pop {
   animation: check-pop 0.35s ease-out;
+}
+
+@keyframes modal-in {
+  from {
+    opacity: 0;
+    transform: scale(0.97) translateY(4px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+.animate-modal-in {
+  animation: modal-in 0.16s ease-out;
 }

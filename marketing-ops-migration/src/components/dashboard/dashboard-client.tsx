@@ -4,22 +4,21 @@ import { useMemo, useState } from "react";
 import { ShoppingCart, AlertTriangle, CheckCircle2, Package, ArrowUpRight, ArrowDownRight } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { PageHeader } from "@/components/ui/page-header";
+import { EmptyState } from "@/components/ui/empty-state";
 import { StatCard } from "@/components/dashboard/stat-card";
 import { StatusBarChart, OrdersEvolutionChart, ProjectConsumptionChart } from "@/components/dashboard/dashboard-charts";
 import { DateRangeFilter, currentMonthRange, isInRange } from "@/components/ui/date-range-filter";
 import { ORDER_STATUS_VALUES, ORDER_STATUS_LABEL, ORDER_STATUS_COLOR } from "@/lib/order-status";
 import { MOVEMENT_TYPE_LABEL } from "@/lib/movement-types";
+import { CHART_COLORS } from "@/lib/theme-colors";
 import type { MovementTypeValue } from "@/lib/movement-types";
 import type { OrderStatusValue } from "@/lib/order-status";
 import type { OrderDTO } from "@/types/order";
 import type { MovementDTO } from "@/types/movement";
 import type { StockItemDTO } from "@/types/stock";
 
-const PURPLE = "#7C6FCB";
-const WARN = "#D9A441";
-const CRIT = "#D6503F";
-const PRIMARY = "#3E4C6E";
-const OK = "#1F9D6E";
+const { purple: PURPLE, warn: WARN, crit: CRIT, primary: PRIMARY, ok: OK } = CHART_COLORS;
 
 export function DashboardClient({
   orders,
@@ -82,13 +81,11 @@ export function DashboardClient({
 
   return (
     <div className="space-y-6">
-      <div className="flex flex-wrap items-start justify-between gap-4">
-        <div>
-          <h1 className="text-xl font-semibold text-zinc-900 dark:text-zinc-50">Visão geral</h1>
-          <p className="text-sm text-zinc-500 dark:text-zinc-400">Painel executivo do Departamento de Marketing</p>
-        </div>
-        <DateRangeFilter value={range} onChange={setRange} />
-      </div>
+      <PageHeader
+        title="Visão geral"
+        description="Painel executivo do Departamento de Marketing"
+        actions={<DateRangeFilter value={range} onChange={setRange} />}
+      />
 
       <div className="grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-5">
         <StatCard label="Pedidos em andamento" value={emAndamento} color={PRIMARY} icon={ShoppingCart} href="/pedidos" />
@@ -107,17 +104,20 @@ export function DashboardClient({
           <div className="mb-4 text-sm font-medium text-zinc-700 dark:text-zinc-300">
             Itens com estoque crítico <span className="font-normal text-zinc-400">(situação atual)</span>
           </div>
-          <div className="space-y-2">
+          <div className="space-y-0.5">
             {criticalItems.map((s) => (
-              <div key={s.id} className="flex items-center justify-between text-sm">
+              <div
+                key={s.id}
+                className="-mx-2 flex items-center justify-between rounded-md px-2 py-1.5 text-sm transition-colors hover:bg-zinc-50 dark:hover:bg-zinc-800/40"
+              >
                 <span className="text-zinc-700 dark:text-zinc-300">{s.name}</span>
-                <span className="text-brand-crit">
+                <span className="font-medium text-brand-crit">
                   {s.quantity} / mín. {s.minStock}
                 </span>
               </div>
             ))}
             {criticalItems.length === 0 && (
-              <p className="text-sm text-zinc-500 dark:text-zinc-400">Nenhum item crítico.</p>
+              <EmptyState message="Nenhum item crítico." />
             )}
           </div>
         </Card>
@@ -126,9 +126,12 @@ export function DashboardClient({
       <div className="grid gap-4 lg:grid-cols-2">
         <Card>
           <div className="mb-3 text-sm font-medium text-zinc-700 dark:text-zinc-300">Pedidos no período</div>
-          <div className="space-y-2">
+          <div className="space-y-0.5">
             {latestOrders.map((o) => (
-              <div key={o.id} className="flex items-center justify-between text-sm">
+              <div
+                key={o.id}
+                className="-mx-2 flex items-center justify-between gap-2 rounded-md px-2 py-1.5 text-sm transition-colors hover:bg-zinc-50 dark:hover:bg-zinc-800/40"
+              >
                 <span className="truncate text-zinc-700 dark:text-zinc-300">{o.stockItem.name}</span>
                 <Badge color={ORDER_STATUS_COLOR[o.status as OrderStatusValue]}>
                   {ORDER_STATUS_LABEL[o.status as OrderStatusValue]}
@@ -136,17 +139,20 @@ export function DashboardClient({
               </div>
             ))}
             {latestOrders.length === 0 && (
-              <p className="text-sm text-zinc-500 dark:text-zinc-400">Nenhum pedido no período selecionado.</p>
+              <EmptyState message="Nenhum pedido no período selecionado." />
             )}
           </div>
         </Card>
         <Card>
           <div className="mb-3 text-sm font-medium text-zinc-700 dark:text-zinc-300">Movimentações no período</div>
-          <div className="space-y-2">
+          <div className="space-y-0.5">
             {latestMovements.map((m) => {
               const positive = m.direction === "ENTRADA";
               return (
-                <div key={m.id} className="flex items-center justify-between text-sm">
+                <div
+                  key={m.id}
+                  className="-mx-2 flex items-center justify-between rounded-md px-2 py-1.5 text-sm transition-colors hover:bg-zinc-50 dark:hover:bg-zinc-800/40"
+                >
                   <span className="flex items-center gap-1.5 text-zinc-700 dark:text-zinc-300">
                     {positive ? (
                       <ArrowUpRight size={14} className="text-brand-ok" />
@@ -155,7 +161,7 @@ export function DashboardClient({
                     )}
                     {MOVEMENT_TYPE_LABEL[m.type as MovementTypeValue]} · {m.stockItem.name}
                   </span>
-                  <span className="text-zinc-500 dark:text-zinc-400">
+                  <span className="font-medium text-zinc-500 dark:text-zinc-400">
                     {positive ? "+" : "-"}
                     {m.quantity}
                   </span>
@@ -163,7 +169,7 @@ export function DashboardClient({
               );
             })}
             {latestMovements.length === 0 && (
-              <p className="text-sm text-zinc-500 dark:text-zinc-400">Nenhuma movimentação no período selecionado.</p>
+              <EmptyState message="Nenhuma movimentação no período selecionado." />
             )}
           </div>
         </Card>

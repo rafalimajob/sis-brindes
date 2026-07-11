@@ -3,6 +3,7 @@
 import { Suspense, useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import Link from "next/link";
+import { CheckCircle2, XCircle } from "lucide-react";
 
 function VerifyEmailInner() {
   const searchParams = useSearchParams();
@@ -31,9 +32,12 @@ function VerifyEmailInner() {
   if (!token) {
     return (
       <div className="space-y-3 text-center">
-        <h1 className="text-lg font-semibold text-zinc-900 dark:text-zinc-50">Não foi possível confirmar</h1>
-        <p className="text-sm text-red-600 dark:text-red-400">Link de verificação incompleto.</p>
-        <Link href="/login" className="inline-block text-sm font-medium text-brand-primary hover:underline dark:text-blue-300">
+        <XCircle size={32} className="mx-auto text-brand-crit" />
+        <h1 className="text-xl font-semibold tracking-tight text-zinc-900 dark:text-zinc-50">
+          Não foi possível confirmar
+        </h1>
+        <p className="text-sm text-zinc-500 dark:text-zinc-400">Link de verificação incompleto.</p>
+        <Link href="/login" className="inline-block text-sm font-medium text-brand-primary hover:underline">
           Ir para o login
         </Link>
       </div>
@@ -47,17 +51,21 @@ function VerifyEmailInner() {
       )}
       {status === "ok" && (
         <>
-          <h1 className="text-lg font-semibold text-zinc-900 dark:text-zinc-50">E-mail confirmado</h1>
-          <p className="text-sm text-zinc-600 dark:text-zinc-400">Sua conta está pronta. Você já pode entrar.</p>
+          <CheckCircle2 size={32} className="mx-auto text-brand-ok" />
+          <h1 className="text-xl font-semibold tracking-tight text-zinc-900 dark:text-zinc-50">E-mail confirmado</h1>
+          <p className="text-sm text-zinc-500 dark:text-zinc-400">Sua conta está pronta. Você já pode entrar.</p>
         </>
       )}
       {status === "error" && (
         <>
-          <h1 className="text-lg font-semibold text-zinc-900 dark:text-zinc-50">Não foi possível confirmar</h1>
-          <p className="text-sm text-red-600 dark:text-red-400">{error}</p>
+          <XCircle size={32} className="mx-auto text-brand-crit" />
+          <h1 className="text-xl font-semibold tracking-tight text-zinc-900 dark:text-zinc-50">
+            Não foi possível confirmar
+          </h1>
+          <p className="text-sm text-zinc-500 dark:text-zinc-400">{error}</p>
         </>
       )}
-      <Link href="/login" className="inline-block text-sm font-medium text-brand-primary hover:underline dark:text-blue-300">
+      <Link href="/login" className="inline-block text-sm font-medium text-brand-primary hover:underline">
         Ir para o login
       </Link>
     </div>
