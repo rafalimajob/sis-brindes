@@ -10,6 +10,7 @@ import {
   ArrowLeftRight,
   Gift,
   FileBarChart,
+  Building2,
   ChevronsLeft,
   ChevronsRight,
 } from "lucide-react";
@@ -19,6 +20,7 @@ const NAV_ITEMS = [
   { href: "/pedidos", label: "Pedidos", icon: ShoppingCart },
   { href: "/estoque", label: "Estoque", icon: Package },
   { href: "/movimentacoes", label: "Movimentações", icon: ArrowLeftRight },
+  { href: "/consumo-area", label: "Consumo por área", icon: Building2 },
   { href: "/kits", label: "Kits", icon: Gift },
   { href: "/relatorios", label: "Relatórios", icon: FileBarChart },
 ] as const;

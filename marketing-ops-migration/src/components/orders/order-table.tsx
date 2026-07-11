@@ -9,6 +9,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { OrderModal } from "@/components/orders/order-modal";
 import { ORDER_STATUS_VALUES, ORDER_STATUS_LABEL, ORDER_STATUS_COLOR } from "@/lib/order-status";
+import { matchesSearch } from "@/lib/search";
 import type { OrderDTO } from "@/types/order";
 import type { OrderStatusValue } from "@/lib/order-status";
 import type { StockOptionDTO } from "@/types/movement";
@@ -52,11 +53,10 @@ export function OrderTable({ initialOrders, stock }: { initialOrders: OrderDTO[]
   const [error, setError] = useState<string | null>(null);
 
   const filtered = useMemo(() => {
-    const q = search.trim().toLowerCase();
     const list = orders.filter(
       (o) =>
         (statusFilter === "TODOS" || o.status === statusFilter) &&
-        (!q || [o.stockItem.name, o.ocNumber, o.project].join(" ").toLowerCase().includes(q))
+        matchesSearch([o.stockItem.name, o.ocNumber, o.project], search)
     );
     const dir = sortDir === "asc" ? 1 : -1;
     const getter = SORT_GETTERS[sortKey];

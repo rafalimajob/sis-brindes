@@ -11,6 +11,9 @@ export interface MovementDTO {
   stockItemId: string;
   stockItem: { name: string; code: string };
   performedBy: { name: string };
+  area?: { id: string; name: string } | null;
+  unitCost?: string | null;
+  totalCost?: string | null;
 }
 
 export interface StockOptionDTO {
@@ -18,4 +21,5 @@ export interface StockOptionDTO {
   code: string;
   name: string;
   quantity: number;
+  lastCost?: string | null;
 }

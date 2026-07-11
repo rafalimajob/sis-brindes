@@ -45,15 +45,23 @@ export function OrdersEvolutionChart({ data }: { data: { month: string; pedidos:
   );
 }
 
-export function ProjectConsumptionChart({ data }: { data: { project: string; qty: number }[] }) {
+export function ProjectConsumptionChart({
+  data,
+  title = "Consumo por Projeto/Campanha",
+  valueFormatter,
+}: {
+  data: { project: string; qty: number }[];
+  title?: string;
+  valueFormatter?: (value: number) => string;
+}) {
   return (
     <Card>
-      <div className="mb-4 text-sm font-medium text-zinc-700 dark:text-zinc-300">Consumo por Projeto/Campanha</div>
+      <div className="mb-4 text-sm font-medium text-zinc-700 dark:text-zinc-300">{title}</div>
       <ResponsiveContainer width="100%" height={220}>
         <BarChart data={data}>
           <XAxis dataKey="project" tick={{ fontSize: 10 }} interval={0} angle={-15} textAnchor="end" height={50} />
-          <YAxis tick={{ fontSize: 11 }} />
-          <Tooltip />
+          <YAxis tick={{ fontSize: 11 }} tickFormatter={valueFormatter} width={valueFormatter ? 64 : 60} />
+          <Tooltip formatter={valueFormatter ? (v) => valueFormatter(Number(v)) : undefined} />
           <Bar dataKey="qty" fill={ACCENT} radius={[6, 6, 0, 0]} />
         </BarChart>
       </ResponsiveContainer>

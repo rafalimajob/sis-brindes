@@ -1,11 +1,14 @@
 "use client";
 
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { Plus } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { DateRangeFilter, ALL_TIME_RANGE, isInRange } from "@/components/ui/date-range-filter";
 import { MovementModal } from "@/components/movements/movement-modal";
 import { MOVEMENT_TYPE_LABEL } from "@/lib/movement-types";
+import { matchesSearch } from "@/lib/search";
 import type { MovementDTO, StockOptionDTO } from "@/types/movement";
 
 const fmtDateTime = (iso: string) =>
@@ -19,7 +22,22 @@ export function MovementTable({
   stock: StockOptionDTO[];
 }) {
   const [movements, setMovements] = useState(initialMovements);
+  const [search, setSearch] = useState("");
+  const [range, setRange] = useState(ALL_TIME_RANGE);
   const [showModal, setShowModal] = useState(false);
+
+  const filtered = useMemo(
+    () =>
+      movements.filter(
+        (m) =>
+          isInRange(m.date, range) &&
+          matchesSearch(
+            [m.stockItem.name, m.stockItem.code, MOVEMENT_TYPE_LABEL[m.type], m.project, m.performedBy.name, m.notes],
+            search
+          )
+      ),
+    [movements, search, range]
+  );
 
   async function refresh() {
     const res = await fetch("/api/movements");
@@ -28,11 +46,21 @@ export function MovementTable({
 
   return (
     <div className="space-y-4">
-      <div className="flex items-center justify-between">
+      <div className="flex flex-wrap items-center justify-between gap-3">
         <h1 className="text-xl font-semibold text-zinc-900 dark:text-zinc-50">Movimentações</h1>
         <Button onClick={() => setShowModal(true)}>
           <Plus size={16} /> Nova movimentação
         </Button>
+      </div>
+
+      <div className="flex flex-wrap items-end justify-between gap-3">
+        <Input
+          placeholder="Buscar por item, tipo, projeto, responsável ou observação..."
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+          className="max-w-sm"
+        />
+        <DateRangeFilter value={range} onChange={setRange} />
       </div>
 
       <Card className="overflow-x-auto p-0">
@@ -49,7 +77,7 @@ export function MovementTable({
             </tr>
           </thead>
           <tbody>
-            {movements.map((m) => {
+            {filtered.map((m) => {
               const signed = m.direction === "ENTRADA" ? m.quantity : -m.quantity;
               return (
                 <tr key={m.id} className="border-t border-zinc-100 dark:border-zinc-800">
@@ -66,10 +94,12 @@ export function MovementTable({
                 </tr>
               );
             })}
-            {movements.length === 0 && (
+            {filtered.length === 0 && (
               <tr>
                 <td colSpan={7} className="py-8 text-center text-sm text-zinc-500 dark:text-zinc-400">
-                  Nenhuma movimentação registrada.
+                  {movements.length === 0
+                    ? "Nenhuma movimentação registrada."
+                    : "Nenhuma movimentação encontrada para os filtros selecionados."}
                 </td>
               </tr>
             )}

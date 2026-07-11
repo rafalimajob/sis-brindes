@@ -8,6 +8,7 @@ import { ViewToggle, type ViewMode } from "@/components/ui/view-toggle";
 import { StockCardGrid } from "@/components/stock/stock-card-grid";
 import { StockListView } from "@/components/stock/stock-list-view";
 import { StockModal } from "@/components/stock/stock-modal";
+import { matchesSearch } from "@/lib/search";
 import type { StockItemDTO } from "@/types/stock";
 
 const VIEW_STORAGE_KEY = "estoque-view";
@@ -35,11 +36,10 @@ export function StockGrid({ initialItems }: { initialItems: StockItemDTO[] }) {
     localStorage.setItem(VIEW_STORAGE_KEY, next);
   }
 
-  const filtered = useMemo(() => {
-    const q = search.trim().toLowerCase();
-    if (!q) return items;
-    return items.filter((s) => [s.name, s.category, s.code].join(" ").toLowerCase().includes(q));
-  }, [items, search]);
+  const filtered = useMemo(
+    () => items.filter((s) => matchesSearch([s.name, s.category, s.code], search)),
+    [items, search]
+  );
 
   async function refresh() {
     const res = await fetch("/api/stock");

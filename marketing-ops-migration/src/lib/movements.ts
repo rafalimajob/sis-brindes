@@ -9,6 +9,7 @@ interface ApplyMovementInput {
   project?: string | null;
   notes?: string | null;
   orderId?: string | null;
+  areaId?: string | null;
   performedById: string;
 }
 
@@ -33,6 +34,11 @@ export async function applyMovement(input: ApplyMovementInput) {
       data: { quantity: { increment: delta }, updatedById: input.performedById },
     });
 
+    // Snapshot do custo do item no momento da retirada, para o valor histórico
+    // não mudar se o custo cadastrado no item for atualizado depois.
+    const unitCost = input.areaId && stockItem.lastCost ? stockItem.lastCost : null;
+    const totalCost = unitCost ? unitCost.times(input.quantity) : null;
+
     const movement = await tx.movement.create({
       data: {
         direction: input.direction,
@@ -42,6 +48,9 @@ export async function applyMovement(input: ApplyMovementInput) {
         notes: input.notes || null,
         stockItemId: input.stockItemId,
         orderId: input.orderId || null,
+        areaId: input.areaId || null,
+        unitCost,
+        totalCost,
         performedById: input.performedById,
       },
     });

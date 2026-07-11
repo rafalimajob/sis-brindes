@@ -58,6 +58,7 @@ enum HistoryEntity {
   STOCK_ITEM
   MOVEMENT
   KIT
+  AREA
 }
 
 // ----------------------------------------------------------------------------
@@ -218,6 +219,14 @@ model Movement {
   kitOutputId String?                                     // agrupa as N movimentações geradas por uma saída de kit
   kitOutput   KitOutput? @relation(fields: [kitOutputId], references: [id], onDelete: SetNull)
 
+  // Preenchidos apenas para retiradas de "Consumo por área" (ver módulo abaixo).
+  // unitCost/totalCost são um snapshot do StockItem.lastCost no momento da
+  // retirada, para o valor histórico não mudar se o custo do item for atualizado depois.
+  areaId    String?
+  area      Area?    @relation(fields: [areaId], references: [id], onDelete: Restrict)
+  unitCost  Decimal? @db.Decimal(10, 2)
+  totalCost Decimal? @db.Decimal(10, 2)
+
   // Rastreabilidade obrigatória: toda movimentação registra quem a realizou
   performedById String
   performedBy   User    @relation("MovementPerformedBy", fields: [performedById], references: [id], onDelete: Restrict)
@@ -228,6 +237,7 @@ model Movement {
   @@index([date])
   @@index([project])
   @@index([performedById])
+  @@index([areaId])
   @@map("movements")
 }
 
@@ -279,6 +289,24 @@ model KitOutput {
 
   @@index([performedById])
   @@map("kit_outputs")
+}
+
+// ----------------------------------------------------------------------------
+// MÓDULO 6 — CONSUMO POR ÁREA
+// Cadastro das áreas da instituição que retiram materiais para consumo
+// próprio. Cada retirada gera uma Movement (SAIDA / CONSUMO_INTERNO) com
+// areaId preenchido — não é uma tabela paralela de saldo.
+// ----------------------------------------------------------------------------
+
+model Area {
+  id        String     @id @default(cuid())
+  name      String     @unique
+  movements Movement[]
+
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+
+  @@map("areas")
 }
 
 // ----------------------------------------------------------------------------
