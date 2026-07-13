@@ -139,7 +139,7 @@ export function OrderTable({ initialOrders, stock }: { initialOrders: OrderDTO[]
         </Select>
       </div>
 
-      {error && <ErrorBanner message={error} />}
+      {error && <ErrorBanner message={error} onDismiss={() => setError(null)} />}
 
       <Card className="overflow-x-auto p-0">
         <table className="w-full text-sm">

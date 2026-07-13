@@ -96,7 +96,7 @@ export function StockGrid({ initialItems }: { initialItems: StockItemDTO[] }) {
         <ViewToggle view={view} onChange={changeView} />
       </div>
 
-      {error && <ErrorBanner message={error} />}
+      {error && <ErrorBanner message={error} onDismiss={() => setError(null)} />}
 
       {view === "grid" ? (
         <StockCardGrid items={filtered} onEdit={openEdit} onDelete={handleDelete} deletingId={deletingId} />

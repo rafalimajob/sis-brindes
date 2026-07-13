@@ -64,7 +64,7 @@ export function StockModal({
   return (
     <Modal title={item ? "Editar item de estoque" : "Novo item de estoque"} onClose={onClose} wide>
       <form onSubmit={handleSubmit} className="space-y-4">
-        {error && <ErrorBanner message={error} />}
+        {error && <ErrorBanner message={error} onDismiss={() => setError(null)} />}
         <div className="grid gap-3 sm:grid-cols-2">
           <Input label="Nome" value={form.name} onChange={(e) => set("name", e.target.value)} required autoFocus />
 

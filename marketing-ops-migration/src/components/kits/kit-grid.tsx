@@ -52,7 +52,7 @@ export function KitGrid({ initialKits, stock }: { initialKits: KitDTO[]; stock: 
         }
       />
 
-      {error && <ErrorBanner message={error} />}
+      {error && <ErrorBanner message={error} onDismiss={() => setError(null)} />}
 
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
         {kits.map((k) => (

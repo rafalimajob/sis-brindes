@@ -42,7 +42,7 @@ export default function LoginPage() {
         <p className="mt-0.5 text-sm text-zinc-500 dark:text-zinc-400">Acesse sua conta do Marketing Ops</p>
       </div>
 
-      {error && <ErrorBanner message={error} />}
+      {error && <ErrorBanner message={error} onDismiss={() => setError(null)} />}
 
       <Input label="E-mail" type="email" value={email} onChange={(e) => setEmail(e.target.value)} required autoFocus />
       <Input label="Senha" type="password" value={password} onChange={(e) => setPassword(e.target.value)} required />

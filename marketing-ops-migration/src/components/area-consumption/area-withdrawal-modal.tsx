@@ -75,7 +75,7 @@ export function AreaWithdrawalModal({
   return (
     <Modal title="Nova retirada por área" onClose={onClose}>
       <form onSubmit={handleSubmit} className="space-y-4">
-        {error && <ErrorBanner message={error} />}
+        {error && <ErrorBanner message={error} onDismiss={() => setError(null)} />}
 
         <div className="grid gap-3">
           <Select label="Área" value={areaId} onChange={(e) => setAreaId(e.target.value)}>

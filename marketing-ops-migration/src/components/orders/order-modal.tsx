@@ -156,7 +156,7 @@ export function OrderModal({
   return (
     <Modal title={currentOrder ? "Editar pedido" : "Novo pedido de compra"} onClose={onClose} wide>
       <form onSubmit={handleSubmit} className="space-y-4">
-        {error && <ErrorBanner message={error} />}
+        {error && <ErrorBanner message={error} onDismiss={() => setError(null)} />}
 
         <div className="grid gap-3 sm:grid-cols-2">
           <Select

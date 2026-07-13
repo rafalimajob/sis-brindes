@@ -59,6 +59,17 @@ enum HistoryEntity {
   MOVEMENT
   KIT
   AREA
+  USER
+}
+
+// PENDING: cadastro concluído, aguardando aprovação de um administrador (não consegue logar).
+// ACTIVE: acesso normal liberado. DEACTIVATED: acesso revogado por um administrador
+// ("exclusão" de usuário — preserva o histórico de quem criou/alterou o quê, que não pode
+// ser apagado do banco por integridade referencial).
+enum UserStatus {
+  PENDING
+  ACTIVE
+  DEACTIVATED
 }
 
 // ----------------------------------------------------------------------------
@@ -80,6 +91,7 @@ model User {
   emailVerified      DateTime?                          // preenchido após confirmação por e-mail
   passwordHash       String
   role               UserRole  @default(USER)
+  status             UserStatus @default(PENDING)          // novos cadastros aguardam aprovação de um admin
 
   // --- MFA (TOTP, ex: Google Authenticator/Authy) ---
   mfaEnabled         Boolean   @default(false)

@@ -63,7 +63,7 @@ export function KitModal({
   return (
     <Modal title="Novo kit" onClose={onClose} wide>
       <form onSubmit={handleSubmit} className="space-y-4">
-        {error && <ErrorBanner message={error} />}
+        {error && <ErrorBanner message={error} onDismiss={() => setError(null)} />}
 
         <Input label="Nome do kit" value={name} onChange={(e) => setName(e.target.value)} required autoFocus />
 

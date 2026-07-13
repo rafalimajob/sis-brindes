@@ -31,7 +31,7 @@ export const authOptions: NextAuthOptions = {
         const verified = verifyTicket(ticket, "mfa-verified");
         if (verified) {
           const user = await prisma.user.findUnique({ where: { id: verified.userId } });
-          if (!user || !user.emailVerified || !user.mfaEnabled) return null;
+          if (!user || !user.emailVerified || !user.mfaEnabled || user.status !== "ACTIVE") return null;
           return toSessionUser(user);
         }
 
@@ -40,7 +40,7 @@ export const authOptions: NextAuthOptions = {
         if (!challenge) return null;
 
         const user = await prisma.user.findUnique({ where: { id: challenge.userId } });
-        if (!user || !user.emailVerified || !user.mfaEnabled || !user.mfaSecret) return null;
+        if (!user || !user.emailVerified || !user.mfaEnabled || !user.mfaSecret || user.status !== "ACTIVE") return null;
 
         if (credentials?.totpCode) {
           const plainSecret = decryptMfaSecret(user.mfaSecret);

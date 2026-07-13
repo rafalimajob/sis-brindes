@@ -86,7 +86,7 @@ export function MovementModal({
           </button>
         </div>
 
-        {error && <ErrorBanner message={error} />}
+        {error && <ErrorBanner message={error} onDismiss={() => setError(null)} />}
 
         <div className="grid gap-3">
           <Select label="Tipo" value={type} onChange={(e) => setType(e.target.value as MovementTypeValue)}>

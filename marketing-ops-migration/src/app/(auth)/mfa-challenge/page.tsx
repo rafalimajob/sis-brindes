@@ -53,7 +53,7 @@ function MfaChallengeInner() {
         </p>
       </div>
 
-      {error && <ErrorBanner message={error} />}
+      {error && <ErrorBanner message={error} onDismiss={() => setError(null)} />}
 
       <Input
         label={useBackupCode ? "Código de backup" : "Código de 6 dígitos"}

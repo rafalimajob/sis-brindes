@@ -109,7 +109,7 @@ function MfaSetupInner() {
             <span key={c}>{c}</span>
           ))}
         </div>
-        {error && <ErrorBanner message={error} />}
+        {error && <ErrorBanner message={error} onDismiss={() => setError(null)} />}
         <Button onClick={handleFinish} disabled={finishing} className="w-full">
           {finishing ? "Entrando..." : "Já salvei meus códigos, continuar"}
         </Button>
@@ -141,7 +141,7 @@ function MfaSetupInner() {
         </code>
       </div>
 
-      {error && <ErrorBanner message={error} />}
+      {error && <ErrorBanner message={error} onDismiss={() => setError(null)} />}
 
       <Input
         label="Código de 6 dígitos"

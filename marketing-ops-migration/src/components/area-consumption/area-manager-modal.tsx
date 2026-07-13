@@ -91,7 +91,7 @@ export function AreaManagerModal({
   return (
     <Modal title="Gerenciar áreas" onClose={onClose}>
       <div className="space-y-4">
-        {error && <ErrorBanner message={error} />}
+        {error && <ErrorBanner message={error} onDismiss={() => setError(null)} />}
 
         <form onSubmit={handleAdd} className="flex items-end gap-2">
           <Input

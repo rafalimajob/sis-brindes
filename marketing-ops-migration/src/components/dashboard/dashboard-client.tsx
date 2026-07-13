@@ -56,7 +56,7 @@ export function DashboardClient({
   const statusData = ORDER_STATUS_VALUES.map((s) => ({
     status: s,
     label: ORDER_STATUS_LABEL[s],
-    count: periodOrders.filter((o) => o.status === s).length,
+    count: orders.filter((o) => o.status === s).length,
     color: ORDER_STATUS_COLOR[s],
   })).filter((d) => d.count > 0);
 

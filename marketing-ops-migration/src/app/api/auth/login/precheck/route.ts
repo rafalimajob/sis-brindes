@@ -30,6 +30,20 @@ export async function POST(request: NextRequest) {
     );
   }
 
+  if (user.status === "PENDING") {
+    return NextResponse.json(
+      { error: "Seu cadastro está aguardando aprovação de um administrador." },
+      { status: 403 }
+    );
+  }
+
+  if (user.status === "DEACTIVATED") {
+    return NextResponse.json(
+      { error: "Sua conta foi desativada. Entre em contato com um administrador." },
+      { status: 403 }
+    );
+  }
+
   if (user.mfaEnabled) {
     const ticket = issueTicket("mfa-challenge", user.id, user.email);
     return NextResponse.json({ mfaEnabled: true, ticket });

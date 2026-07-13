@@ -15,7 +15,7 @@ import {
 } from "recharts";
 import type { ValueType, NameType } from "recharts/types/component/DefaultTooltipContent";
 import { Card } from "@/components/ui/card";
-import { CHART_COLORS } from "@/lib/theme-colors";
+import { CHART_COLORS, categoryColor } from "@/lib/theme-colors";
 
 const AXIS_TICK = { fontSize: 11, fill: "#94A3B8" };
 
@@ -42,7 +42,9 @@ function ChartTooltip({
 export function StatusBarChart({ data }: { data: { status: string; label: string; count: number; color: string }[] }) {
   return (
     <Card>
-      <div className="mb-4 text-sm font-medium text-zinc-700 dark:text-zinc-300">Pedidos por status</div>
+      <div className="mb-4 text-sm font-medium text-zinc-700 dark:text-zinc-300">
+        Pedidos por status <span className="font-normal text-zinc-400">(situação atual)</span>
+      </div>
       <ResponsiveContainer width="100%" height={220}>
         <BarChart data={data} layout="vertical" margin={{ left: 10 }}>
           <XAxis type="number" hide />
@@ -121,7 +123,11 @@ export function ProjectConsumptionChart({
             content={(props) => <ChartTooltip {...props} valueFormatter={valueFormatter} />}
             cursor={{ fill: "rgba(148, 163, 184, 0.08)" }}
           />
-          <Bar dataKey="qty" fill={CHART_COLORS.accent} radius={[6, 6, 0, 0]} maxBarSize={44} />
+          <Bar dataKey="qty" radius={[6, 6, 0, 0]} maxBarSize={44}>
+            {data.map((d, i) => (
+              <Cell key={d.project} fill={categoryColor(i)} />
+            ))}
+          </Bar>
         </BarChart>
       </ResponsiveContainer>
     </Card>

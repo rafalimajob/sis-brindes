@@ -17,3 +17,22 @@ export const CHART_COLORS = {
   crit: "#D6503F",
   slate: "#9B9B97",
 } as const;
+
+/** Paleta cíclica para séries categóricas sem um mapa fixo (ex.: uma barra
+ * por projeto/área, onde a lista de nomes é dinâmica). Ordem escolhida para
+ * alternar matiz entre barras vizinhas (verde → roxo → âmbar → ciano →
+ * vermelho → cinza) e maximizar contraste de leitura mesmo com poucas
+ * categorias. Use `categoryColor(index)` para ciclar quando N > length. */
+export const CATEGORY_COLORS = [
+  CHART_COLORS.primary,
+  CHART_COLORS.purple,
+  CHART_COLORS.warn,
+  CHART_COLORS.accent,
+  CHART_COLORS.crit,
+  CHART_COLORS.slate,
+  CHART_COLORS.ok,
+] as const;
+
+export function categoryColor(index: number): string {
+  return CATEGORY_COLORS[index % CATEGORY_COLORS.length];
+}

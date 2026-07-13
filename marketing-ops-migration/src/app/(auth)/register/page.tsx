@@ -56,7 +56,7 @@ export default function RegisterPage() {
         <p className="mt-0.5 text-sm text-zinc-500 dark:text-zinc-400">Cadastre-se no Marketing Ops</p>
       </div>
 
-      {error && <ErrorBanner message={error} />}
+      {error && <ErrorBanner message={error} onDismiss={() => setError(null)} />}
 
       <Input label="Nome" value={name} onChange={(e) => setName(e.target.value)} required autoFocus />
       <Input label="E-mail" type="email" value={email} onChange={(e) => setEmail(e.target.value)} required />

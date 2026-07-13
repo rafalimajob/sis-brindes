@@ -3,6 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { useSession } from "next-auth/react";
 import {
   LayoutDashboard,
   ShoppingCart,
@@ -11,6 +12,7 @@ import {
   Gift,
   FileBarChart,
   Building2,
+  Users,
   ChevronsLeft,
   ChevronsRight,
 } from "lucide-react";
@@ -25,9 +27,13 @@ const NAV_ITEMS = [
   { href: "/relatorios", label: "Relatórios", icon: FileBarChart },
 ] as const;
 
+const ADMIN_NAV_ITEM = { href: "/usuarios", label: "Usuários", icon: Users } as const;
+
 export function Sidebar() {
   const pathname = usePathname();
+  const { data: session } = useSession();
   const [collapsed, setCollapsed] = useState(false);
+  const navItems = session?.user?.role === "ADMIN" ? [...NAV_ITEMS, ADMIN_NAV_ITEM] : NAV_ITEMS;
 
   return (
     <aside
@@ -47,7 +53,7 @@ export function Sidebar() {
       </div>
 
       <nav className="flex-1 space-y-0.5 px-2 pt-1">
-        {NAV_ITEMS.map(({ href, label, icon: Icon }) => {
+        {navItems.map(({ href, label, icon: Icon }) => {
           const active = pathname === href || pathname.startsWith(`${href}/`);
           return (
             <Link

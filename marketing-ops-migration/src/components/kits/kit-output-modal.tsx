@@ -48,7 +48,7 @@ export function KitOutputModal({
   return (
     <Modal title={`Saída de kit: ${kit.name}`} onClose={onClose}>
       <form onSubmit={handleSubmit} className="space-y-4">
-        {error && <ErrorBanner message={error} />}
+        {error && <ErrorBanner message={error} onDismiss={() => setError(null)} />}
         <div className="grid gap-3">
           <Input
             label="Quantidade de kits"
