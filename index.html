@@ -1,0 +1,1808 @@
+<title>Atlas — Documentação</title>
+<style>
+  :root {
+    --paper: #f5f6f2;
+    --paper-raised: #ffffff;
+    --paper-sunk: #eceee8;
+    --ink: #16201b;
+    --ink-soft: #2c3830;
+    --muted: #5c6a62;
+    --rule: #dbe0d8;
+    --rule-strong: #c4ccc0;
+    --accent: #0b6359;
+    --accent-ink: #072928;
+    --accent-tint: #e6efec;
+    --cyan: #0a7f96;
+    --cyan-tint: #e3f2f4;
+    --purple: #5744c9;
+    --purple-tint: #ece9fa;
+    --amber: #92650f;
+    --amber-tint: #f7ecda;
+    --code-bg: #0f1613;
+    --code-ink: #e7ede9;
+    --shadow: 0 1px 2px rgba(15, 22, 18, 0.06), 0 8px 24px -12px rgba(15, 22, 18, 0.12);
+
+    --serif: "Iowan Old Style", "Palatino Linotype", Palatino, "Book Antiqua", Georgia, serif;
+    --sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    --mono: ui-monospace, "SF Mono", "Cascadia Code", Menlo, Consolas, monospace;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --paper: #10140f;
+      --paper-raised: #171d17;
+      --paper-sunk: #0b0f0b;
+      --ink: #e9ede7;
+      --ink-soft: #ced8cd;
+      --muted: #8ea393;
+      --rule: #263129;
+      --rule-strong: #35423a;
+      --accent: #33d19b;
+      --accent-ink: #7bebbf;
+      --accent-tint: #142620;
+      --cyan: #4fd3e8;
+      --cyan-tint: #0f2529;
+      --purple: #b3a6f7;
+      --purple-tint: #1f1c37;
+      --amber: #eec27a;
+      --amber-tint: #2a2013;
+      --code-bg: #0a0f0a;
+      --code-ink: #d9e4dc;
+      --shadow: 0 1px 2px rgba(0, 0, 0, 0.4), 0 12px 32px -16px rgba(0, 0, 0, 0.6);
+    }
+  }
+  :root[data-theme="dark"] {
+    --paper: #10140f;
+    --paper-raised: #171d17;
+    --paper-sunk: #0b0f0b;
+    --ink: #e9ede7;
+    --ink-soft: #ced8cd;
+    --muted: #8ea393;
+    --rule: #263129;
+    --rule-strong: #35423a;
+    --accent: #33d19b;
+    --accent-ink: #7bebbf;
+    --accent-tint: #142620;
+    --cyan: #4fd3e8;
+    --cyan-tint: #0f2529;
+    --purple: #b3a6f7;
+    --purple-tint: #1f1c37;
+    --amber: #eec27a;
+    --amber-tint: #2a2013;
+    --code-bg: #0a0f0a;
+    --code-ink: #d9e4dc;
+  }
+  :root[data-theme="light"] {
+    --paper: #f5f6f2;
+    --paper-raised: #ffffff;
+    --paper-sunk: #eceee8;
+    --ink: #16201b;
+    --ink-soft: #2c3830;
+    --muted: #5c6a62;
+    --rule: #dbe0d8;
+    --rule-strong: #c4ccc0;
+    --accent: #0b6359;
+    --accent-ink: #072928;
+    --accent-tint: #e6efec;
+    --cyan: #0a7f96;
+    --cyan-tint: #e3f2f4;
+    --purple: #5744c9;
+    --purple-tint: #ece9fa;
+    --amber: #92650f;
+    --amber-tint: #f7ecda;
+    --code-bg: #0f1613;
+    --code-ink: #e7ede9;
+  }
+
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  @media (prefers-reduced-motion: reduce) {
+    html { scroll-behavior: auto; }
+  }
+  body {
+    margin: 0;
+    background: var(--paper);
+    color: var(--ink);
+    font-family: var(--sans);
+    font-size: 16px;
+    line-height: 1.65;
+  }
+  a { color: var(--accent); text-decoration: none; }
+  a:hover { text-decoration: underline; }
+  a:focus-visible, button:focus-visible, summary:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+    border-radius: 2px;
+  }
+
+  .shell {
+    display: grid;
+    grid-template-columns: 288px minmax(0, 1fr);
+    min-height: 100vh;
+  }
+  @media (max-width: 899px) {
+    .shell { display: block; }
+  }
+
+  /* ---------- Sidebar (desktop) ---------- */
+  .rail {
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    overflow-y: auto;
+    padding: 2.25rem 1.5rem 2rem;
+    border-right: 1px solid var(--rule);
+    background: var(--paper-sunk);
+  }
+  @media (max-width: 899px) { .rail { display: none; } }
+
+  .rail-brand {
+    display: flex;
+    align-items: baseline;
+    gap: 0.5rem;
+    margin-bottom: 0.15rem;
+  }
+  .rail-brand .mark {
+    font-family: var(--serif);
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: var(--accent-ink);
+    letter-spacing: 0.01em;
+  }
+  .rail-brand .sub {
+    font-size: 0.72rem;
+    color: var(--muted);
+    letter-spacing: 0.03em;
+  }
+  .rail-tagline {
+    font-size: 0.8rem;
+    color: var(--muted);
+    margin: 0 0 1.75rem;
+    line-height: 1.5;
+  }
+
+  .rail-group + .rail-group { margin-top: 1.5rem; }
+  .rail-group-label {
+    font-size: 0.68rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--muted);
+    margin: 0 0 0.5rem;
+  }
+  .rail nav ul { list-style: none; margin: 0; padding: 0; }
+  .rail nav li + li { margin-top: 0.1rem; }
+  .rail nav a {
+    display: flex;
+    align-items: baseline;
+    gap: 0.6rem;
+    padding: 0.4rem 0.5rem;
+    border-radius: 6px;
+    color: var(--ink-soft);
+    font-size: 0.88rem;
+  }
+  .rail nav a:hover { background: var(--paper-raised); text-decoration: none; }
+  .rail nav a.active {
+    background: var(--paper-raised);
+    color: var(--ink);
+    font-weight: 600;
+    box-shadow: inset 2px 0 0 var(--dot, var(--accent));
+  }
+  .rail nav .idx {
+    font-family: var(--mono);
+    font-size: 0.68rem;
+    color: var(--muted);
+    min-width: 1.3em;
+  }
+  .rail nav .dot {
+    width: 5px; height: 5px; border-radius: 50%;
+    background: var(--dot, var(--accent));
+    flex-shrink: 0;
+    align-self: center;
+  }
+
+  .rail-foot {
+    margin-top: 2rem;
+    padding-top: 1.25rem;
+    border-top: 1px solid var(--rule);
+    font-size: 0.72rem;
+    color: var(--muted);
+  }
+  .rail-foot a { color: var(--muted); }
+
+  /* ---------- Mobile TOC ---------- */
+  .toc-mobile { display: none; }
+  @media (max-width: 899px) {
+    .toc-mobile {
+      display: block;
+      margin: 0;
+      border-bottom: 1px solid var(--rule);
+      background: var(--paper-sunk);
+    }
+    .toc-mobile summary {
+      cursor: pointer;
+      padding: 0.9rem 1.25rem;
+      font-size: 0.85rem;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      list-style: none;
+    }
+    .toc-mobile summary::-webkit-details-marker { display: none; }
+    .toc-mobile summary::before { content: "☰"; font-size: 0.9rem; }
+    .toc-mobile[open] summary::before { content: "✕"; }
+    .toc-mobile nav { padding: 0 1.25rem 1.25rem; }
+    .toc-mobile nav ul { list-style: none; margin: 0; padding: 0; }
+    .toc-mobile nav a {
+      display: flex; gap: 0.6rem; padding: 0.4rem 0;
+      color: var(--ink-soft); font-size: 0.9rem;
+    }
+    .toc-mobile nav .idx { font-family: var(--mono); font-size: 0.7rem; color: var(--muted); min-width: 1.3em; }
+  }
+
+  /* ---------- Main column ---------- */
+  main { min-width: 0; }
+  .hero {
+    padding: 3.5rem clamp(1.5rem, 4vw, 4rem) 2.5rem;
+    border-bottom: 1px solid var(--rule);
+  }
+  .hero .eyebrow {
+    font-family: var(--mono);
+    font-size: 0.75rem;
+    color: var(--accent);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    margin: 0 0 0.9rem;
+  }
+  .hero h1 {
+    font-family: var(--serif);
+    font-size: clamp(2.1rem, 4vw, 2.85rem);
+    line-height: 1.12;
+    margin: 0 0 0.85rem;
+    color: var(--accent-ink);
+    text-wrap: balance;
+    font-weight: 600;
+  }
+  .hero .lede {
+    max-width: 62ch;
+    font-size: 1.05rem;
+    color: var(--ink-soft);
+    margin: 0 0 1.5rem;
+  }
+  .hero .facts {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem 1.75rem;
+    font-size: 0.82rem;
+    color: var(--muted);
+  }
+  .hero .facts b { color: var(--ink-soft); font-weight: 600; }
+
+  .doc {
+    max-width: 74ch;
+    margin: 0 auto;
+    padding: 0 clamp(1.5rem, 4vw, 4rem);
+  }
+
+  section.entry {
+    padding: 3.25rem 0;
+    border-bottom: 1px solid var(--rule);
+    scroll-margin-top: 1.5rem;
+  }
+  section.entry:last-of-type { border-bottom: none; padding-bottom: 5rem; }
+
+  .entry-head {
+    display: flex;
+    align-items: center;
+    gap: 0.65rem;
+    margin-bottom: 0.35rem;
+  }
+  .entry-head .num {
+    font-family: var(--mono);
+    font-size: 0.78rem;
+    color: var(--dot, var(--accent));
+  }
+  .entry-head .tag {
+    font-size: 0.68rem;
+    text-transform: uppercase;
+    letter-spacing: 0.07em;
+    color: var(--dot, var(--accent));
+    font-weight: 600;
+  }
+
+  .doc h1 { display: none; } /* o h1 de cada doc vira o título da entrada abaixo */
+  .entry-title {
+    font-family: var(--serif);
+    font-size: 1.9rem;
+    font-weight: 600;
+    color: var(--ink);
+    margin: 0 0 1.5rem;
+    text-wrap: balance;
+  }
+
+  .doc h2 {
+    font-family: var(--serif);
+    font-size: 1.32rem;
+    font-weight: 600;
+    color: var(--ink);
+    margin: 2.1rem 0 0.9rem;
+  }
+  .doc h3 {
+    font-family: var(--sans);
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--ink);
+    margin: 1.6rem 0 0.6rem;
+  }
+  .doc h4 {
+    font-family: var(--sans);
+    font-size: 0.88rem;
+    font-weight: 600;
+    color: var(--ink-soft);
+    margin: 1.3rem 0 0.5rem;
+  }
+  .doc p { margin: 0 0 1.05rem; color: var(--ink-soft); }
+  .doc ul, .doc ol { margin: 0 0 1.05rem; padding-left: 1.3rem; color: var(--ink-soft); }
+  .doc li { margin-bottom: 0.45rem; }
+  .doc li > ul, .doc li > ol { margin-top: 0.45rem; }
+  .doc strong { color: var(--ink); font-weight: 700; }
+  .doc hr { border: none; border-top: 1px solid var(--rule); margin: 2rem 0; }
+
+  .doc code {
+    font-family: var(--mono);
+    font-size: 0.85em;
+    background: var(--paper-sunk);
+    border: 1px solid var(--rule);
+    border-radius: 4px;
+    padding: 0.1em 0.35em;
+    color: var(--ink);
+  }
+  .doc pre {
+    background: var(--code-bg);
+    color: var(--code-ink);
+    border-radius: 8px;
+    padding: 1rem 1.15rem;
+    overflow-x: auto;
+    font-size: 0.84rem;
+    line-height: 1.55;
+    margin: 0 0 1.3rem;
+  }
+  .doc pre code {
+    background: none;
+    border: none;
+    padding: 0;
+    color: inherit;
+    font-size: 1em;
+  }
+
+  .table-wrap { overflow-x: auto; margin: 0 0 1.4rem; border: 1px solid var(--rule); border-radius: 8px; }
+  .doc table { width: 100%; border-collapse: collapse; font-size: 0.87rem; background: var(--paper-raised); }
+  .doc th, .doc td { text-align: left; padding: 0.55rem 0.85rem; border-bottom: 1px solid var(--rule); vertical-align: top; }
+  .doc thead th {
+    font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.04em;
+    color: var(--muted); background: var(--paper-sunk); font-weight: 600;
+    border-bottom: 1px solid var(--rule-strong);
+  }
+  .doc tbody tr:last-child td { border-bottom: none; }
+  .doc tbody tr:hover { background: var(--paper-sunk); }
+
+  .doc blockquote {
+    margin: 0 0 1.3rem;
+    padding: 0.9rem 1.15rem;
+    background: var(--amber-tint);
+    border-left: 3px solid var(--amber);
+    border-radius: 0 6px 6px 0;
+    color: var(--ink-soft);
+  }
+  .doc blockquote p:last-child { margin-bottom: 0; }
+
+  a.xref { font-weight: 500; border-bottom: 1px dotted var(--accent); }
+  a.xref:hover { border-bottom-style: solid; }
+
+  .back-to-top {
+    position: fixed;
+    right: 1.5rem;
+    bottom: 1.5rem;
+    background: var(--paper-raised);
+    border: 1px solid var(--rule-strong);
+    color: var(--ink-soft);
+    font-family: var(--mono);
+    font-size: 0.72rem;
+    padding: 0.55rem 0.9rem;
+    border-radius: 999px;
+    box-shadow: var(--shadow);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.15s ease;
+  }
+  .back-to-top.show { opacity: 1; pointer-events: auto; }
+  @media (prefers-reduced-motion: reduce) { .back-to-top { transition: none; } }
+</style>
+
+<div class="shell">
+  <aside class="rail" aria-label="Índice">
+    <div class="rail-brand"><span class="mark">Atlas</span><span class="sub">docs</span></div>
+    <p class="rail-tagline">Referência técnica e funcional do sistema, para manutenção, evolução e uso.</p>
+    <div class="rail-group"><p class="rail-group-label">Parte I — Visão geral do produto</p><nav><ul><li><a href="#overview" style="--dot: var(--accent)"><span class="idx">01</span><span class="dot"></span>Visão geral</a></li>
+<li><a href="#arquitetura" style="--dot: var(--accent)"><span class="idx">02</span><span class="dot"></span>Arquitetura</a></li>
+<li><a href="#modulos" style="--dot: var(--accent)"><span class="idx">03</span><span class="dot"></span>Módulos e regras de negócio</a></li></ul></nav></div>
+<div class="rail-group"><p class="rail-group-label">Parte II — Referência técnica</p><nav><ul><li><a href="#banco" style="--dot: var(--cyan)"><span class="idx">04</span><span class="dot"></span>Banco de dados</a></li>
+<li><a href="#api" style="--dot: var(--cyan)"><span class="idx">05</span><span class="dot"></span>Referência de API</a></li>
+<li><a href="#design" style="--dot: var(--cyan)"><span class="idx">06</span><span class="dot"></span>Design system</a></li></ul></nav></div>
+<div class="rail-group"><p class="rail-group-label">Parte III — Operação</p><nav><ul><li><a href="#auth" style="--dot: var(--purple)"><span class="idx">07</span><span class="dot"></span>Autenticação e segurança</a></li>
+<li><a href="#manutencao" style="--dot: var(--purple)"><span class="idx">08</span><span class="dot"></span>Guia de manutenção</a></li>
+<li><a href="#deploy" style="--dot: var(--purple)"><span class="idx">09</span><span class="dot"></span>Deploy</a></li></ul></nav></div>
+    <div class="rail-foot">
+      <div>Marketing Ops — ecossistema</div>
+    </div>
+  </aside>
+
+  <main>
+    <details class="toc-mobile">
+      <summary>Índice</summary>
+      <nav aria-label="Índice"><p class="rail-group-label">Parte I — Visão geral do produto</p><ul><li><a href="#overview" style="--dot: var(--accent)"><span class="idx">01</span><span class="dot"></span>Visão geral</a></li>
+<li><a href="#arquitetura" style="--dot: var(--accent)"><span class="idx">02</span><span class="dot"></span>Arquitetura</a></li>
+<li><a href="#modulos" style="--dot: var(--accent)"><span class="idx">03</span><span class="dot"></span>Módulos e regras de negócio</a></li></ul></nav>
+<nav aria-label="Índice"><p class="rail-group-label">Parte II — Referência técnica</p><ul><li><a href="#banco" style="--dot: var(--cyan)"><span class="idx">04</span><span class="dot"></span>Banco de dados</a></li>
+<li><a href="#api" style="--dot: var(--cyan)"><span class="idx">05</span><span class="dot"></span>Referência de API</a></li>
+<li><a href="#design" style="--dot: var(--cyan)"><span class="idx">06</span><span class="dot"></span>Design system</a></li></ul></nav>
+<nav aria-label="Índice"><p class="rail-group-label">Parte III — Operação</p><ul><li><a href="#auth" style="--dot: var(--purple)"><span class="idx">07</span><span class="dot"></span>Autenticação e segurança</a></li>
+<li><a href="#manutencao" style="--dot: var(--purple)"><span class="idx">08</span><span class="dot"></span>Guia de manutenção</a></li>
+<li><a href="#deploy" style="--dot: var(--purple)"><span class="idx">09</span><span class="dot"></span>Deploy</a></li></ul></nav>
+    </details>
+
+    <div class="hero">
+      <p class="eyebrow">Documentação · Atlas</p>
+      <h1>O manual de referência do Atlas</h1>
+      <p class="lede">Nove capítulos cobrindo do porquê de cada decisão de schema ao que fazer quando o menu de status de um pedido some — escrito para quem vai dar manutenção, evoluir ou operar o sistema.</p>
+      <div class="facts">
+        <span><b>Stack</b> Next.js 16 · React 19 · PostgreSQL · Prisma 7</span>
+        <span><b>Ecossistema</b> Marketing Ops</span>
+        <span><b>Atualizado</b> Julho de 2026</span>
+      </div>
+    </div>
+
+    <div class="doc">
+      <section class="entry" id="overview">
+  <div class="entry-head" style="--dot: var(--accent)">
+    <span class="num">01</span>
+    <span class="tag">Introdução</span>
+  </div>
+  <h2 class="entry-title">Visão geral</h2>
+  <p><strong>Atlas</strong> é o sistema desenvolvido dentro do ecossistema <strong>Marketing Ops</strong> para o Departamento de
+Marketing controlar pedidos de compra, estoque, movimentações, kits, consumo por área da
+instituição e relatórios — substituindo o controle por planilhas.</p>
+<p>Stack: <strong>Next.js 16 + React 19 + PostgreSQL + Prisma 7</strong>, autenticação própria com MFA (TOTP)
+obrigatório e aprovação de cadastro por administrador.</p>
+<h3>Documentação</h3>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Documento</th>
+<th>Conteúdo</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><a href="#arquitetura"><code>docs/ARQUITETURA.md</code></a></td>
+<td>Stack, padrão de pastas, como os dados fluem entre página/API/banco</td>
+</tr>
+<tr>
+<td><a href="#banco"><code>docs/BANCO_DE_DADOS.md</code></a></td>
+<td>Schema Prisma explicado módulo a módulo, migrations, seed</td>
+</tr>
+<tr>
+<td><a href="#auth"><code>docs/AUTENTICACAO_E_SEGURANCA.md</code></a></td>
+<td>Cadastro → aprovação → MFA → login; papéis; como criar o 1º admin</td>
+</tr>
+<tr>
+<td><a href="#modulos"><code>docs/MODULOS.md</code></a></td>
+<td>O que cada tela faz e as regras de negócio por trás</td>
+</tr>
+<tr>
+<td><a href="#api"><code>docs/API.md</code></a></td>
+<td>Referência de todas as rotas de API</td>
+</tr>
+<tr>
+<td><a href="#design"><code>docs/DESIGN_SYSTEM.md</code></a></td>
+<td>Paleta de cores institucional, tema claro/escuro, componentes de UI</td>
+</tr>
+<tr>
+<td><a href="#manutencao"><code>docs/MANUTENCAO.md</code></a></td>
+<td>Comandos do dia a dia, lacunas conhecidas, onde adicionar o quê</td>
+</tr>
+<tr>
+<td><a href="#deploy"><code>DEPLOYMENT.md</code></a></td>
+<td>Guia de deploy (banco gerenciado, hospedagem, variáveis de ambiente)</td>
+</tr>
+</tbody></table></div>
+<h3>Como rodar localmente</h3>
+<pre><code class="language-bash">cp .env.example .env            # preencher AUTH_SECRET e MFA_ENCRYPTION_KEY (ver comandos abaixo)
+openssl rand -base64 32          # -&gt; AUTH_SECRET
+openssl rand -hex 32             # -&gt; MFA_ENCRYPTION_KEY
+
+docker compose up -d db          # sobe o Postgres local
+npm install                      # também roda `prisma generate` (postinstall)
+npx prisma migrate dev           # cria as tabelas
+npx prisma db seed               # (opcional) dados de demonstração — ver docs/BANCO_DE_DADOS.md
+                                  # antes de logar com o usuário do seed, é necessário aprová-lo
+                                  # manualmente no banco (detalhes no link acima)
+
+npm run dev                      # http://localhost:3000
+</code></pre>
+<p>Sem <code>EMAIL_API_KEY</code> configurado, o link de confirmação de cadastro é apenas logado no console do
+servidor (não é enviado de verdade) — suficiente para desenvolvimento local.</p>
+<h3>Scripts</h3>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Comando</th>
+<th>O que faz</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>npm run dev</code></td>
+<td>Servidor de desenvolvimento (Turbopack)</td>
+</tr>
+<tr>
+<td><code>npm run build</code></td>
+<td>Build de produção (inclui checagem de tipos e lint)</td>
+</tr>
+<tr>
+<td><code>npm run start</code></td>
+<td>Roda o build de produção</td>
+</tr>
+<tr>
+<td><code>npm run lint</code></td>
+<td>ESLint</td>
+</tr>
+<tr>
+<td><code>npx tsc --noEmit</code></td>
+<td>Checagem de tipos isolada</td>
+</tr>
+</tbody></table></div>
+<p>Não há suíte de testes automatizados no projeto — ver <a href="#manutencao" class="xref"><code>docs/MANUTENCAO.md</code></a>.</p>
+<h3>Módulos</h3>
+<p>Dashboard · Pedidos · Estoque · Movimentações · Kits · Consumo por área · Usuários (admin) ·
+Relatórios — descrição funcional completa em <a href="#modulos"><code>docs/MODULOS.md</code></a>.</p>
+<h3>Aviso para quem for mexer no código com um agente de IA</h3>
+<p>Este projeto usa <strong>Next.js 16</strong>, que tem mudanças que quebram padrões de versões anteriores
+(ex.: <code>params</code> de rotas dinâmicas é uma <code>Promise</code>). Ver <code>AGENTS.md</code> antes de gerar código novo.</p>
+<hr>
+<p><code>marketing-ops.jsx</code> (raiz do projeto) é o protótipo React original usado como referência de
+UI/UX durante a migração para Next.js — não é código de produção (está excluído do lint em
+<code>eslint.config.mjs</code>).</p>
+
+</section>
+
+<section class="entry" id="arquitetura">
+  <div class="entry-head" style="--dot: var(--accent)">
+    <span class="num">02</span>
+    <span class="tag">Fundação</span>
+  </div>
+  <h2 class="entry-title">Arquitetura</h2>
+  <h3>Stack</h3>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Camada</th>
+<th>Tecnologia</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Framework</td>
+<td>Next.js 16 (App Router, Turbopack)</td>
+</tr>
+<tr>
+<td>UI</td>
+<td>React 19, Tailwind CSS v4 (config CSS-first, sem <code>tailwind.config.js</code>)</td>
+</tr>
+<tr>
+<td>Gráficos</td>
+<td>Recharts</td>
+</tr>
+<tr>
+<td>Ícones</td>
+<td>lucide-react</td>
+</tr>
+<tr>
+<td>Banco de dados</td>
+<td>PostgreSQL</td>
+</tr>
+<tr>
+<td>ORM</td>
+<td>Prisma 7 (<code>@prisma/client</code> + <code>@prisma/adapter-pg</code>)</td>
+</tr>
+<tr>
+<td>Autenticação</td>
+<td>NextAuth 4 (Credentials Provider, sessão JWT) + MFA/TOTP próprio</td>
+</tr>
+<tr>
+<td>E-mail</td>
+<td>Resend (produção) / log no console (dev)</td>
+</tr>
+<tr>
+<td>Planilhas</td>
+<td>ExcelJS (exportação de relatórios)</td>
+</tr>
+<tr>
+<td>Container local</td>
+<td>Docker Compose (Postgres)</td>
+</tr>
+</tbody></table></div>
+<blockquote>
+<p><strong>Next.js 16 tem mudanças que quebram padrões de versões anteriores.</strong> O mais relevante no
+código: <code>params</code> de rotas dinâmicas (API e páginas) é uma <code>Promise</code> e precisa de <code>await</code>.
+Veja <code>AGENTS.md</code> antes de alterar qualquer rota — e confira <code>node_modules/next/dist/docs/</code>
+se algo parecer não bater com o que se espera de Next.js &quot;clássico&quot;.</p>
+</blockquote>
+<h3>Visão geral do fluxo de dados</h3>
+<p>O app segue consistentemente o padrão <strong>Server Component busca dados → Client Component
+renderiza e interage</strong>:</p>
+<ol>
+<li>Uma página em <code>src/app/(app)/&lt;modulo&gt;/page.tsx</code> é um <strong>Server Component</strong> que consulta o
+Prisma diretamente, mapeia o resultado para um DTO simples (definido em <code>src/types/</code>) e
+passa como prop para um componente client.</li>
+<li>O componente client (em <code>src/components/&lt;modulo&gt;/</code>) guarda o estado local (lista, filtros,
+modais abertos) e faz <code>fetch()</code> para as rotas de API quando o usuário cria/edita/exclui algo,
+atualizando o estado local com a resposta — não há revalidação de cache do Next.js nem
+bibliotecas de data-fetching (SWR/React Query); é <code>fetch</code> + <code>useState</code> direto.</li>
+<li>Toda regra de negócio &quot;não trivial&quot; (que mexe em saldo de estoque, ou depende de mais de uma
+tabela) fica centralizada em <code>src/lib/*.ts</code> (<code>movements.ts</code>, <code>orders.ts</code>) e é executada dentro
+de uma transação Prisma (<code>prisma.$transaction</code>) — nunca na rota da API diretamente nem no
+client.</li>
+</ol>
+<p>Esse padrão se repete em Pedidos, Estoque, Movimentações, Kits, Consumo por área e Usuários.</p>
+<h3>Por que a lógica de negócio fica em <code>src/lib/</code>, não nas rotas</h3>
+<p>A rota de API (<code>src/app/api/**/route.ts</code>) faz apenas: checar sessão/permissão, validar o shape
+do body, chamar a função de <code>lib/</code>, e traduzir erros do Prisma para uma resposta amigável
+(<code>src/lib/api-errors.ts</code>). Isso existe para que:</p>
+<ul>
+<li>A mesma operação (ex.: <code>applyMovement</code>) nunca seja reimplementada de formas ligeiramente
+diferentes em dois lugares (ex.: uma rota de Movimentações e uma de Consumo por área que na
+prática geram o mesmo tipo de registro).</li>
+<li>O saldo de estoque (<code>StockItem.quantity</code>) tenha um único caminho de escrita.</li>
+</ul>
+<h3>Estrutura de pastas</h3>
+<pre><code>src/
+├── app/
+│   ├── (auth)/            # layout com card centralizado — login, cadastro, MFA, verificação de e-mail
+│   ├── (app)/             # layout com Sidebar+Header — todas as telas autenticadas
+│   │   ├── dashboard/
+│   │   ├── pedidos/
+│   │   ├── estoque/
+│   │   ├── movimentacoes/
+│   │   ├── consumo-area/
+│   │   ├── kits/
+│   │   ├── relatorios/
+│   │   └── usuarios/      # admin-only
+│   └── api/               # rotas de API (ver docs/API.md)
+├── components/
+│   ├── ui/                # primitivos compartilhados (Button, Card, Modal, Badge, ...)
+│   ├── layout/             # Sidebar, Header, ThemeToggle
+│   ├── providers/          # SessionProvider, script de tema (evita flash)
+│   └── &lt;modulo&gt;/           # componentes client de cada módulo
+├── lib/                    # regra de negócio, auth, MFA, e-mail, relatórios, cores
+├── types/                  # DTOs usados entre Server Component e Client Component
+└── generated/prisma/        # client Prisma gerado (não versionado, ver .gitignore)
+</code></pre>
+<h3>Autoria e auditoria obrigatórias</h3>
+<p>Toda escrita relevante grava <strong>quem fez</strong> e <strong>o quê mudou</strong>:</p>
+<ul>
+<li><code>StockItem.createdById</code> / <code>updatedById</code>, <code>Movement.performedById</code>, <code>KitOutput.performedById</code>
+são campos obrigatórios (não nulos) e usam <code>onDelete: Restrict</code> — um usuário nunca pode ser
+apagado do banco se tiver qualquer histórico vinculado a ele. Isso é proposital: a
+rastreabilidade não pode se perder por causa de uma exclusão. É por isso que &quot;excluir usuário&quot;
+na tela de Usuários na prática <strong>desativa</strong> o acesso (ver <a href="#auth" class="xref"><code>docs/AUTENTICACAO_E_SEGURANCA.md</code></a>).</li>
+<li>Toda ação relevante (criar/editar/excluir pedido, item de estoque, movimentação, kit, área,
+usuário) grava uma linha em <code>HistoryLog</code> via <code>src/lib/history.ts</code>, com um resumo legível e um
+diff campo-a-campo em JSON. <strong>Não existe hoje nenhuma tela ou rota de API que leia esse
+histórico de volta</strong> — os dados são gravados mas não há UI de auditoria ainda (ver
+<a href="#manutencao" class="xref"><code>docs/MANUTENCAO.md</code></a>, seção &quot;Lacunas conhecidas&quot;).</li>
+</ul>
+<h3>Design tokens e tema claro/escuro</h3>
+<p>Ver <a href="#design" class="xref"><code>docs/DESIGN_SYSTEM.md</code></a> para a paleta de cores e os componentes de UI compartilhados.</p>
+
+</section>
+
+<section class="entry" id="modulos">
+  <div class="entry-head" style="--dot: var(--accent)">
+    <span class="num">03</span>
+    <span class="tag">Produto</span>
+  </div>
+  <h2 class="entry-title">Módulos e regras de negócio</h2>
+  <p>Guia funcional de cada tela — o que ela faz, quais regras de negócio se aplicam, e onde no
+código está implementada cada regra. Pensado tanto para quem for dar manutenção quanto para
+quem for usar o sistema no dia a dia.</p>
+<h3>Dashboard (<code>/dashboard</code>)</h3>
+<p>Painel executivo com KPIs e três gráficos, todos alimentados a partir dos mesmos dados de
+Pedidos/Estoque/Movimentações (sem tabelas próprias).</p>
+<ul>
+<li><strong>Filtro de período</strong> (<code>DateRangeFilter</code>, presets: Tudo / Mês atual / Mês anterior / Últimos 3
+meses / Este ano) — afeta os KPIs de pedidos (&quot;em andamento&quot;, &quot;atrasados&quot;, &quot;entregues no
+período&quot;), a evolução mensal e o consumo por projeto. <strong>Não afeta</strong>: os KPIs de estoque
+(&quot;Itens em estoque&quot;, &quot;Abaixo do mínimo&quot; — são sempre o saldo atual, não faz sentido &quot;filtrar
+por período&quot; um saldo) nem o gráfico &quot;Pedidos por status&quot;, que também é sempre a distribuição
+atual de todos os pedidos, independente do período selecionado — um pedido cancelado ou
+entregue em outro mês continua contando ali.</li>
+<li><strong>Pedidos por status</strong>: uma cor exclusiva por status (<code>ORDER_STATUS_COLOR</code> em
+<code>src/lib/order-status.ts</code>) — os 8 estágios não-terminais seguem uma progressão de matiz
+(cinza → ciano → azul → roxo), e os dois estágios finais reaproveitam as cores semânticas de
+sucesso/erro do resto do app.</li>
+<li><strong>Consumo por Projeto/Campanha</strong>: soma a quantidade de itens retirados (<code>SAIDA</code>) por projeto
+no período. Cada barra tem uma cor cíclica diferente (<code>categoryColor()</code> em
+<code>src/lib/theme-colors.ts</code>) para facilitar comparar visualmente barras vizinhas.</li>
+</ul>
+<h3>Pedidos (<code>/pedidos</code>)</h3>
+<p>CRUD de pedidos de compra, sempre vinculados a um item de estoque já cadastrado.</p>
+<ul>
+<li><strong>Pipeline de status</strong> (<code>OrderStatus</code>, 10 valores): <code>RASCUNHO → EM_ELABORACAO → AGUARDANDO_COTACAO → COTACAO_RECEBIDA → AGUARDANDO_EMISSAO_OC → PEDIDO_ENVIADO_FORNECEDOR → EM_PRODUCAO → EM_TRANSPORTE → ENTREGUE</code>, com <code>CANCELADO</code> como saída alternativa a qualquer
+momento.</li>
+<li><strong>Confirmar entrega credita estoque automaticamente</strong>: mudar o status para <code>ENTREGUE</code> (na
+criação do pedido ou numa edição) soma <code>quantity</code> ao saldo do item e registra uma movimentação
+de entrada (<code>COMPRA</code>) vinculada ao pedido — sem nenhuma ação manual extra em Movimentações.
+Isso só dispara a primeira vez que o pedido chega em <code>ENTREGUE</code> (reabrir e salvar de novo não
+credita duas vezes). Se <code>deliveredDate</code> não for informado nesse momento, o sistema preenche
+com a data atual automaticamente.</li>
+<li><strong>Anexos</strong>: cada pedido pode ter arquivos anexados (até 15MB cada). Hoje ficam salvos no disco
+do servidor (<code>public/uploads/</code>), não em um serviço externo — ver <a href="#manutencao" class="xref"><code>docs/MANUTENCAO.md</code></a> antes de
+colocar em produção com múltiplas instâncias/serverless.</li>
+<li><strong>Busca</strong>: por nome do item, número da OC ou projeto — tolera plural/singular parcial, acentos
+e ordem das palavras trocada (<code>matchesSearch()</code>, <code>src/lib/search.ts</code>). Também é possível
+filtrar por status.</li>
+<li>Exclusão de pedido é definitiva (sem bloqueio por integridade referencial como nos outros
+módulos) — a rota <code>DELETE</code> não faz <code>try/catch</code> de FK como as demais.</li>
+</ul>
+<h3>Estoque (<code>/estoque</code>)</h3>
+<p>Cadastro dos itens que a área de Marketing controla fisicamente.</p>
+<ul>
+<li><strong>Código automático</strong> (<code>MKT-0001</code>, <code>MKT-0002</code>, ...): gerado a cada item novo, nunca editável.</li>
+<li>Campos de controle: <code>quantity</code> (saldo atual — só muda via Movimentações/Pedidos/Kits, nunca
+editado diretamente aqui, exceto ajuste manual), <code>minStock</code>/<code>idealStock</code> (usados para o
+indicador de nível — abaixo do mínimo, próximo do mínimo, adequado) e <code>lastCost</code> (usado como
+snapshot de custo nas retiradas de Consumo por área).</li>
+<li>Duas visualizações (grade de cartões / lista), alternáveis pelo <code>ViewToggle</code>.</li>
+<li>Exclusão é bloqueada se o item tiver pedidos, movimentações ou kits vinculados.</li>
+</ul>
+<h3>Movimentações (<code>/movimentacoes</code>)</h3>
+<p>Registro manual de entradas e saídas de estoque que não vêm de um pedido entregue nem de uma
+saída de kit — ex.: ajuste de inventário, doação recebida, uso em evento.</p>
+<ul>
+<li><code>direction</code> (<code>ENTRADA</code>/<code>SAIDA</code>) determina quais <code>type</code> são permitidos:<ul>
+<li>Entrada: Compra, Devolução, Ajuste de entrada.</li>
+<li>Saída: Evento, Brinde, Kit*, Consumo interno*, Ajuste de saída.</li>
+<li>*Na prática, &quot;Kit&quot; e &quot;Consumo interno&quot; são gerados automaticamente pelos módulos de Kits e
+Consumo por área respectivamente — lançar esses tipos manualmente aqui também é possível,
+mas o fluxo normal é pelas telas dedicadas.</li>
+</ul>
+</li>
+<li>Toda movimentação passa por <code>applyMovement()</code>, que rejeita a operação se o saldo resultante
+ficaria negativo.</li>
+<li>Filtro por período (mesmo componente do Dashboard) e por projeto/campanha; busca por texto.</li>
+</ul>
+<h3>Kits (<code>/kits</code>)</h3>
+<p>Um kit é uma &quot;receita&quot; (lista de itens de estoque + quantidade de cada) que pode ser retirado em
+lote — ex.: &quot;Kit Boas-vindas&quot; = 1 camiseta + 1 ecobag + 1 bloco.</p>
+<ul>
+<li>Cadastro do kit: nome + lista de itens (sem duplicar o mesmo item dentro do mesmo kit).</li>
+<li><strong>Retirar um kit</strong> (&quot;saída de kit&quot;): informa quantos kits saem; o sistema valida que <strong>todos</strong>
+os itens componentes têm saldo suficiente antes de decrementar qualquer um, depois cria um
+<code>KitOutput</code> (o evento agregado: &quot;saíram 3 kits Boas-vindas, em tal data, por fulano&quot;) e, para
+cada item componente, uma <code>Movement</code> (<code>SAIDA</code>/<code>KIT</code>) vinculada a esse <code>KitOutput</code> — dá pra ver
+tanto o evento inteiro quanto o efeito item a item.</li>
+<li>Excluir um kit é bloqueado se ele já tiver alguma saída registrada.</li>
+</ul>
+<h3>Consumo por área (<code>/consumo-area</code>)</h3>
+<p>Controla o consumo físico <strong>e financeiro</strong> de materiais retirados pelas áreas da instituição
+(RH, Eventos, Diretoria etc.) — não é uma campanha de Marketing, é uso interno.</p>
+<ul>
+<li>Cadastro de áreas (nome único) em um modal de gestão dedicado.</li>
+<li>Registrar uma retirada: escolhe a área, o item e a quantidade. O sistema:<ol>
+<li>Cria uma <code>Movement</code> normal (<code>SAIDA</code>/<code>CONSUMO_INTERNO</code>) via <code>applyMovement()</code> — mesmo
+caminho de escrita do saldo usado por Movimentações e Pedidos, então o saldo de estoque
+<strong>nunca diverge</strong> entre os módulos.</li>
+<li>Tira um <strong>snapshot financeiro</strong>: <code>unitCost</code> = <code>StockItem.lastCost</code> no momento da retirada,
+<code>totalCost</code> = <code>unitCost × quantidade</code>. Editar o custo do item depois não altera o valor
+histórico já registrado dessa retirada.</li>
+</ol>
+</li>
+<li>Dois gráficos: quantidade retirada por área e valor (R$) retirado por área, cada barra com
+cor própria (mesmo esquema cíclico do Dashboard).</li>
+<li>Excluir uma área é bloqueado se ela já tiver retirada registrada.</li>
+</ul>
+<h3>Usuários (<code>/usuarios</code>, somente ADMIN)</h3>
+<p>Ver <a href="#auth" class="xref"><code>docs/AUTENTICACAO_E_SEGURANCA.md</code></a> para o detalhamento completo do fluxo de aprovação,
+papéis e proteções. Resumo funcional: aprovar cadastros pendentes, desativar/reativar acesso,
+promover/remover privilégio de administrador, excluir (quando possível). Toda ação passa por uma
+confirmação (pop-up) antes de ser executada, e toda ação fica registrada no histórico de
+auditoria.</p>
+<h3>Relatórios (<code>/relatorios</code>)</h3>
+<p>Sete relatórios em Excel (<code>.xlsx</code>), gerados sob demanda (sem cache) via ExcelJS:
+<code>pedidos-por-status</code>, <code>pedidos</code>, <code>pedidos-por-projeto</code>, <code>estoque</code>, <code>itens-criticos</code>
+(itens abaixo do mínimo), <code>movimentacoes</code>, <code>consumo-por-projeto</code>. A página é só uma lista
+estática de cartões com link direto para <code>/api/reports/{tipo}</code> — o navegador baixa o arquivo.</p>
+<h3>Identidade visual</h3>
+<p>Verde institucional <code>#072928</code> (claro) / <code>#00CC88</code> (escuro) como cor de marca, com roxo/ciano
+como cores categóricas de apoio em gráficos — ver <a href="#design" class="xref"><code>docs/DESIGN_SYSTEM.md</code></a>.</p>
+
+</section>
+
+<section class="entry" id="banco">
+  <div class="entry-head" style="--dot: var(--cyan)">
+    <span class="num">04</span>
+    <span class="tag">Schema</span>
+  </div>
+  <h2 class="entry-title">Banco de dados</h2>
+  <p>Schema completo em <code>prisma/schema.prisma</code>. Este documento explica o <em>porquê</em> das decisões de
+modelagem — o schema em si já tem comentários linha a linha, mas aqui está o raciocínio
+agregado, útil para quem for alterar o schema no futuro.</p>
+<h3>Diagrama de relacionamento (simplificado)</h3>
+<pre><code>User ──&lt; StockItem (createdBy/updatedBy)
+User ──&lt; Movement (performedBy)
+User ──&lt; KitOutput (performedBy)
+User ──&lt; HistoryLog (autor, opcional)
+User ──&lt; VerificationToken
+
+StockItem ──&lt; Order
+StockItem ──&lt; Movement
+StockItem ──&lt; KitItem
+
+Order ──&lt; Attachment
+Order ──&lt; Movement (opcional, movimentação gerada pela entrega)
+
+Kit ──&lt; KitItem
+Kit ──&lt; KitOutput ──&lt; Movement (N movimentações por saída de kit)
+
+Area ──&lt; Movement (retiradas de &quot;Consumo por área&quot;)
+</code></pre>
+<h3>Módulos e tabelas</h3>
+<h4>Autenticação (<code>User</code>, <code>VerificationToken</code>)</h4>
+<ul>
+<li><code>User.role</code> (<code>ADMIN</code> | <code>USER</code>) e <code>User.status</code> (<code>PENDING</code> | <code>ACTIVE</code> | <code>DEACTIVATED</code>) juntos
+controlam acesso. Um cadastro novo nasce <code>role: USER</code>, <code>status: PENDING</code> — só entra depois de
+confirmar e-mail <strong>e</strong> ser aprovado por um admin (ver <a href="#auth" class="xref"><code>docs/AUTENTICACAO_E_SEGURANCA.md</code></a>).</li>
+<li><code>mfaEnabled</code> / <code>mfaSecret</code> (criptografado) / <code>mfaBackupCodes</code> (hasheados): estado do MFA
+obrigatório. Nenhum usuário loga sem MFA configurado — é forçado no primeiro login.</li>
+<li><code>VerificationToken</code> é genérico (<code>purpose: string</code>) e serve tanto para confirmação de e-mail
+quanto para os tickets de fluxo de MFA — na prática, os tickets de MFA hoje usam um mecanismo
+separado (HMAC assinado em memória, <code>src/lib/tickets.ts</code>), não gravam nesta tabela; ela é
+usada de fato só para <code>EMAIL_VERIFICATION</code>. O valor <code>&quot;PASSWORD_RESET&quot;</code> existe no comentário do
+campo mas <strong>não há fluxo de reset de senha implementado ainda</strong>.</li>
+</ul>
+<h4>Pedidos de compra (<code>Order</code>, <code>Attachment</code>)</h4>
+<ul>
+<li><code>Order.status</code> segue um pipeline de 10 estágios (<code>OrderStatus</code>), do rascunho até
+<code>ENTREGUE</code>/<code>CANCELADO</code>. Ver <a href="#modulos" class="xref"><code>docs/MODULOS.md</code></a> para o significado de cada estágio e
+<code>src/lib/order-status.ts</code> para os rótulos/cores.</li>
+<li><strong>Confirmar entrega credita estoque automaticamente</strong>: quando o <code>status</code> muda para <code>ENTREGUE</code>
+(na criação ou em uma edição), o sistema chama <code>creditStockForDelivery()</code> dentro da mesma
+transação — soma <code>Order.quantity</code> ao <code>StockItem.quantity</code> e cria uma <code>Movement</code>
+(<code>ENTRADA</code>/<code>COMPRA</code>) vinculada ao pedido (<code>Movement.orderId</code>). Isso só acontece <strong>uma vez</strong>
+(guardado por <code>existing.status !== &quot;ENTREGUE&quot;</code> antes da troca) — reabrir e re-salvar um pedido
+já entregue não credita de novo.</li>
+<li><code>Order.stockItem</code> é <code>onDelete: Restrict</code>: não dá pra apagar um item de estoque que tenha
+pedido vinculado.</li>
+<li><code>Attachment</code> é uma tabela própria (não um array de nomes de arquivo) para já vir pronta para
+upload real. <strong>Hoje o armazenamento é local</strong> (<code>public/uploads/{orderId}/...</code>, ver
+<a href="#manutencao" class="xref"><code>docs/MANUTENCAO.md</code></a>) — o campo <code>url</code> já está desenhado para apontar para um provedor externo
+(S3/Vercel Blob) sem migração de schema quando isso for trocado.</li>
+</ul>
+<h4>Estoque (<code>StockItem</code>)</h4>
+<ul>
+<li><code>code</code> (ex.: <code>MKT-0001</code>) é gerado automaticamente (<code>nextStockCode()</code> em <code>api/stock/route.ts</code>,
+incrementa o sufixo numérico do último código) e é <strong>separado</strong> da chave primária (<code>cuid()</code>),
+de propósito — nunca expor o id interno como identificador de negócio.</li>
+<li><code>lastCost</code> é o campo usado como snapshot de custo em retiradas de &quot;Consumo por área&quot; (ver
+abaixo) — atualizar <code>lastCost</code> não altera o custo de retiradas já registradas.</li>
+</ul>
+<h4>Movimentações (<code>Movement</code>)</h4>
+<p>Tabela central de todo o histórico de saldo. Cada linha tem:</p>
+<ul>
+<li><code>direction</code> (<code>ENTRADA</code>/<code>SAIDA</code>) <strong>sempre</strong> determina o sinal — <code>quantity</code> é sempre positivo.
+Isso existe para nunca depender de interpretar um número negativo em nenhuma tela.</li>
+<li><code>type</code> é o motivo específico dentro daquela direção (<code>MovementType</code>) — ver
+<code>src/lib/movement-types.ts</code> para quais tipos são válidos em cada direção.</li>
+<li><code>orderId</code> (opcional, <code>SetNull</code>): presente quando a movimentação veio de uma entrega de pedido.</li>
+<li><code>kitOutputId</code> (opcional, <code>SetNull</code>): presente quando a movimentação é uma das N geradas por uma
+saída de kit — permite tanto ver o evento agregado (&quot;saíram 3 kits X&quot;) quanto o efeito
+granular em cada item.</li>
+<li><code>areaId</code>/<code>unitCost</code>/<code>totalCost</code> (opcionais, <code>areaId</code> é <code>Restrict</code>): presentes só em retiradas de
+&quot;Consumo por área&quot;. <code>unitCost</code>/<code>totalCost</code> são um <strong>snapshot</strong> do <code>StockItem.lastCost</code> no
+momento da retirada — de propósito, para o valor histórico não mudar se o custo do item for
+editado depois.</li>
+<li><code>performedById</code> é obrigatório e <code>Restrict</code> — toda movimentação tem autor, sem exceção.</li>
+</ul>
+<p>Toda escrita em <code>Movement</code> passa por <code>applyMovement()</code> (<code>src/lib/movements.ts</code>), que:</p>
+<ol>
+<li>Lê o saldo atual do item.</li>
+<li>Calcula o delta com sinal (<code>+quantity</code> para ENTRADA, <code>-quantity</code> para SAIDA).</li>
+<li>Rejeita a operação se o saldo resultante for negativo.</li>
+<li>Atualiza <code>StockItem.quantity</code> e cria a <code>Movement</code> <strong>na mesma transação</strong>.</li>
+</ol>
+<h4>Kits (<code>Kit</code>, <code>KitItem</code>, <code>KitOutput</code>)</h4>
+<ul>
+<li><code>KitItem</code> é a &quot;receita&quot; do kit (quais itens e quantas unidades de cada compõem 1 kit).</li>
+<li>Retirar um kit não mexe em <code>Movement</code> diretamente — cria um <code>KitOutput</code> (quantos kits saíram,
+quando, por quem) e, para cada <code>KitItem</code> do kit, uma <code>Movement</code> (<code>SAIDA</code>/<code>KIT</code>) vinculada via
+<code>kitOutputId</code>, decrementando cada item componente. Tudo em uma transação
+(<code>registerKitOutput()</code>), que primeiro valida que <strong>todos</strong> os componentes têm saldo suficiente
+antes de decrementar qualquer um (evita ficar com saldo negativo em um item no meio do
+processo).</li>
+<li><code>KitOutput.kit</code> é <code>Restrict</code>: não dá pra apagar um kit que já teve saída registrada.</li>
+</ul>
+<h4>Consumo por área (<code>Area</code>)</h4>
+<ul>
+<li><strong>Não é uma tabela paralela de saldo</strong> — é só o cadastro dos nomes das áreas. Cada retirada
+é uma <code>Movement</code> normal (<code>direction: SAIDA</code>, <code>type: CONSUMO_INTERNO</code>) com <code>areaId</code> preenchido,
+criada pelo mesmo <code>applyMovement()</code> usado pelas Movimentações comuns. Isso significa que o
+saldo de estoque nunca pode divergir entre &quot;Movimentações&quot; e &quot;Consumo por área&quot; — é a mesma
+fonte de verdade.</li>
+<li><code>Area</code> é <code>Restrict</code> em <code>Movement.area</code>: não dá pra apagar uma área que já teve retirada.</li>
+</ul>
+<h4>Histórico (<code>HistoryLog</code>)</h4>
+<ul>
+<li><code>entity</code> + <code>entityId</code> identificam o registro afetado; <code>action</code> é <code>CREATE</code>/<code>UPDATE</code>/<code>DELETE</code>;
+<code>summary</code> é uma frase pronta para exibição; <code>diff</code> é um JSON opcional com o detalhe
+campo-a-campo (gerado por <code>diffFields()</code> em <code>src/lib/history.ts</code>).</li>
+<li><code>userId</code> é opcional e <code>SetNull</code> (não <code>Restrict</code>) — de propósito, diferente das outras tabelas
+de autoria: o próprio log de auditoria não pode travar a exclusão/desativação de ninguém.</li>
+<li><strong>Nunca gravar senha ou <code>mfaSecret</code> no campo <code>diff</code></strong> (comentado explicitamente no código).</li>
+</ul>
+<h3>Migrations</h3>
+<p>Ficam em <code>prisma/migrations/</code>, uma pasta por migração (nome com timestamp + descrição):</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Migração</th>
+<th>O que mudou</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>20260711040446_init</code></td>
+<td>Schema inicial completo (Auth, Pedidos, Estoque, Movimentações, Kits, Histórico)</td>
+</tr>
+<tr>
+<td><code>20260711051859_orders_link_stock_item</code></td>
+<td>Ajuste no relacionamento Pedido↔Estoque</td>
+</tr>
+<tr>
+<td><code>20260711162554_add_area_consumption</code></td>
+<td>Módulo Consumo por área (<code>Area</code>, campos <code>areaId</code>/<code>unitCost</code>/<code>totalCost</code> em <code>Movement</code>)</td>
+</tr>
+<tr>
+<td><code>20260713163000_add_user_status</code></td>
+<td><code>UserStatus</code> (aprovação/desativação de usuários) — contas existentes foram migradas para <code>ACTIVE</code> automaticamente, só cadastros novos nascem <code>PENDING</code></td>
+</tr>
+</tbody></table></div>
+<p>Para aplicar em um banco novo: <code>npx prisma migrate deploy</code> (produção) ou
+<code>npx prisma migrate dev</code> (desenvolvimento, também sincroniza o schema se houver diff). Depois,
+<code>npx prisma generate</code> para gerar o client em <code>src/generated/prisma</code> (passo automático via
+<code>postinstall</code> do <code>package.json</code>, mas rode manualmente se editar o schema sem reinstalar).</p>
+<h3>Seed de dados de demonstração</h3>
+<p><code>prisma/seed.ts</code> (rodar com <code>npx prisma db seed</code>) cria um usuário <code>admin@marketingops.local</code> e
+itens de estoque de exemplo.</p>
+<p>O seed grava <code>status: ACTIVE</code> explicitamente para esse admin (sem isso, ele nasceria <code>PENDING</code> —
+o padrão do schema — e ninguém mais existiria no banco para aprová-lo, travando o primeiro
+acesso). Ainda assim, troque o <code>passwordHash</code> de placeholder (<code>&quot;REPLACE_WITH_REAL_HASH&quot;</code>) por um
+hash bcrypt real antes de usar esse usuário — do jeito que está no seed, ninguém consegue logar
+com ele via senha. Para promover outro e-mail (o que você realmente vai usar) a <code>ADMIN</code>, veja
+<a href="#auth" class="xref"><code>docs/AUTENTICACAO_E_SEGURANCA.md</code></a>, seção &quot;Bootstrap do primeiro administrador&quot;.</p>
+
+</section>
+
+<section class="entry" id="api">
+  <div class="entry-head" style="--dot: var(--cyan)">
+    <span class="num">05</span>
+    <span class="tag">Rotas</span>
+  </div>
+  <h2 class="entry-title">Referência de API</h2>
+  <p>Todas as rotas ficam sob <code>src/app/api/</code>. Convenções gerais:</p>
+<ul>
+<li>Toda rota (exceto as de autenticação inicial) começa checando <code>getServerSession(authOptions)</code>
+e devolve <code>401</code> se não houver sessão. Rotas de <code>usuarios/*</code> usam o helper
+<code>requireAdmin()</code> (<code>src/lib/require-admin.ts</code>), que também barra com <code>403</code> quem não é <code>ADMIN</code>.</li>
+<li>Erros do Prisma são traduzidos para mensagens amigáveis por <code>src/lib/api-errors.ts</code> /
+tratamento local de <code>P2002</code> (conflito de unicidade) e <code>P2003</code> (violação de chave estrangeira).</li>
+<li>Rotas dinâmicas (<code>[id]</code>, <code>[type]</code> etc.) recebem <code>params</code> como <strong>Promise</strong> — padrão do Next.js
+16, não uma peculiaridade deste projeto: <code>const { id } = await params;</code>.</li>
+<li>Toda escrita relevante grava uma entrada em <code>HistoryLog</code> (<code>src/lib/history.ts</code>).</li>
+</ul>
+<h3>Autenticação</h3>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Rota</th>
+<th>Método</th>
+<th>Descrição</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>/api/auth/register</code></td>
+<td>POST</td>
+<td>Cria usuário (<code>PENDING</code>), envia e-mail de confirmação</td>
+</tr>
+<tr>
+<td><code>/api/auth/verify-email</code></td>
+<td>POST</td>
+<td>Confirma e-mail via token</td>
+</tr>
+<tr>
+<td><code>/api/auth/login/precheck</code></td>
+<td>POST</td>
+<td>Valida e-mail/senha/status; emite ticket de MFA setup ou challenge</td>
+</tr>
+<tr>
+<td><code>/api/auth/mfa/setup</code></td>
+<td>POST</td>
+<td>Gera secret TOTP + QR code (não persiste ainda)</td>
+</tr>
+<tr>
+<td><code>/api/auth/mfa/verify</code></td>
+<td>POST</td>
+<td>Confirma 1º código, persiste MFA, devolve backup codes</td>
+</tr>
+<tr>
+<td><code>/api/auth/[...nextauth]</code></td>
+<td>GET/POST</td>
+<td>Handler padrão do NextAuth (sessão, callback de credenciais)</td>
+</tr>
+</tbody></table></div>
+<p>Detalhe completo do fluxo: <a href="#auth" class="xref"><code>docs/AUTENTICACAO_E_SEGURANCA.md</code></a>.</p>
+<h3>Usuários (admin)</h3>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Rota</th>
+<th>Método</th>
+<th>Descrição</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>/api/users</code></td>
+<td>GET</td>
+<td>Lista todos os usuários (id/nome/e-mail/papel/status/MFA/data)</td>
+</tr>
+<tr>
+<td><code>/api/users/[id]</code></td>
+<td>PATCH</td>
+<td>Altera <code>role</code> e/ou <code>status</code>. Bloqueia auto-modificação e remoção do último admin ativo</td>
+</tr>
+<tr>
+<td><code>/api/users/[id]</code></td>
+<td>DELETE</td>
+<td>Exclui de verdade se não houver histórico vinculado; senão devolve 409 sugerindo desativar</td>
+</tr>
+</tbody></table></div>
+<h3>Estoque</h3>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Rota</th>
+<th>Método</th>
+<th>Descrição</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>/api/stock</code></td>
+<td>GET</td>
+<td>Lista itens; <code>?q=</code> busca em nome/categoria/código</td>
+</tr>
+<tr>
+<td><code>/api/stock</code></td>
+<td>POST</td>
+<td>Cria item; gera <code>code</code> automático; grava <code>createdById</code>/<code>updatedById</code></td>
+</tr>
+<tr>
+<td><code>/api/stock/[id]</code></td>
+<td>GET</td>
+<td>Busca um item</td>
+</tr>
+<tr>
+<td><code>/api/stock/[id]</code></td>
+<td>PATCH</td>
+<td>Atualiza campos editáveis; sempre atualiza <code>updatedById</code></td>
+</tr>
+<tr>
+<td><code>/api/stock/[id]</code></td>
+<td>DELETE</td>
+<td>Bloqueado (409) se houver pedido/movimentação/kit vinculado</td>
+</tr>
+</tbody></table></div>
+<h3>Movimentações</h3>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Rota</th>
+<th>Método</th>
+<th>Descrição</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>/api/movements</code></td>
+<td>GET</td>
+<td>Lista; <code>?project=</code> filtra por projeto (contém, case-insensitive)</td>
+</tr>
+<tr>
+<td><code>/api/movements</code></td>
+<td>POST</td>
+<td>Valida <code>direction</code>/<code>type</code>/<code>quantity</code>; chama <code>applyMovement()</code></td>
+</tr>
+</tbody></table></div>
+<h3>Consumo por área</h3>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Rota</th>
+<th>Método</th>
+<th>Descrição</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>/api/areas</code></td>
+<td>GET</td>
+<td>Lista áreas (ordem alfabética)</td>
+</tr>
+<tr>
+<td><code>/api/areas</code></td>
+<td>POST</td>
+<td>Cria área; 409 se nome duplicado</td>
+</tr>
+<tr>
+<td><code>/api/areas/[id]</code></td>
+<td>PATCH</td>
+<td>Renomeia; 409 se nome duplicado</td>
+</tr>
+<tr>
+<td><code>/api/areas/[id]</code></td>
+<td>DELETE</td>
+<td>Bloqueado (409) se houver retirada vinculada</td>
+</tr>
+<tr>
+<td><code>/api/area-withdrawals</code></td>
+<td>GET</td>
+<td>Lista todas as <code>Movement</code> com <code>areaId</code> preenchido</td>
+</tr>
+<tr>
+<td><code>/api/area-withdrawals</code></td>
+<td>POST</td>
+<td>Valida área/item/quantidade; força <code>direction: SAIDA</code>, <code>type: CONSUMO_INTERNO</code> no servidor; chama <code>applyMovement()</code></td>
+</tr>
+</tbody></table></div>
+<h3>Kits</h3>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Rota</th>
+<th>Método</th>
+<th>Descrição</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>/api/kits</code></td>
+<td>GET</td>
+<td>Lista kits com itens e nome/código do item</td>
+</tr>
+<tr>
+<td><code>/api/kits</code></td>
+<td>POST</td>
+<td>Valida nome/itens (sem duplicata); cria <code>Kit</code> + <code>KitItem</code>s</td>
+</tr>
+<tr>
+<td><code>/api/kits/[id]</code></td>
+<td>DELETE</td>
+<td>Bloqueado (409) se o kit já tiver saída registrada</td>
+</tr>
+<tr>
+<td><code>/api/kits/[id]/output</code></td>
+<td>POST</td>
+<td>Registra retirada: valida saldo de todos os componentes, cria <code>KitOutput</code> + N <code>Movement</code></td>
+</tr>
+</tbody></table></div>
+<h3>Pedidos</h3>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Rota</th>
+<th>Método</th>
+<th>Descrição</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>/api/orders</code></td>
+<td>GET</td>
+<td>Lista; <code>?q=</code> busca em item/OC/projeto; <code>?status=</code> filtra</td>
+</tr>
+<tr>
+<td><code>/api/orders</code></td>
+<td>POST</td>
+<td>Cria pedido; se já criado como <code>ENTREGUE</code>, credita estoque na mesma transação</td>
+</tr>
+<tr>
+<td><code>/api/orders/[id]</code></td>
+<td>GET</td>
+<td>Busca um pedido com anexos e item</td>
+</tr>
+<tr>
+<td><code>/api/orders/[id]</code></td>
+<td>PATCH</td>
+<td>Atualiza; transição para <code>ENTREGUE</code> credita estoque automaticamente (uma única vez)</td>
+</tr>
+<tr>
+<td><code>/api/orders/[id]</code></td>
+<td>DELETE</td>
+<td>Exclui (sem bloqueio de integridade referencial, ao contrário dos outros módulos)</td>
+</tr>
+<tr>
+<td><code>/api/orders/[id]/attachments</code></td>
+<td>POST</td>
+<td>Upload de anexo (máx. 15MB), salvo em <code>public/uploads/</code></td>
+</tr>
+<tr>
+<td><code>/api/orders/[id]/attachments/[attachmentId]</code></td>
+<td>DELETE</td>
+<td>Remove anexo (registro + arquivo local)</td>
+</tr>
+</tbody></table></div>
+<h3>Relatórios</h3>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Rota</th>
+<th>Método</th>
+<th>Descrição</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>/api/reports/[type]</code></td>
+<td>GET</td>
+<td>Gera e devolve um <code>.xlsx</code>. <code>type</code> ∈ <code>pedidos-por-status</code>, <code>pedidos</code>, <code>pedidos-por-projeto</code>, <code>estoque</code>, <code>itens-criticos</code>, <code>movimentacoes</code>, <code>consumo-por-projeto</code></td>
+</tr>
+</tbody></table></div>
+<h3>O que não existe (e pode surpreender quem procurar)</h3>
+<ul>
+<li><strong>Não há rota de busca dedicada</strong> (<code>/api/search</code>) — a busca em Pedidos/Estoque/Movimentações é
+feita no client, filtrando a lista já carregada (<code>matchesSearch()</code>).</li>
+<li><strong>Não há rota de histórico/auditoria</strong> (<code>/api/history</code>) — <code>HistoryLog</code> é escrito mas nunca lido
+de volta por nenhuma rota ou tela hoje.</li>
+<li><strong>Não há rota de reset de senha</strong> — <code>VerificationToken.purpose</code> já prevê o valor
+<code>&quot;PASSWORD_RESET&quot;</code>, mas o fluxo não foi implementado.</li>
+</ul>
+
+</section>
+
+<section class="entry" id="design">
+  <div class="entry-head" style="--dot: var(--cyan)">
+    <span class="num">06</span>
+    <span class="tag">Interface</span>
+  </div>
+  <h2 class="entry-title">Design system</h2>
+  <p>Interface própria (não usa uma lib de componentes de terceiros), construída sobre Tailwind CSS
+v4 com configuração <em>CSS-first</em> (não existe <code>tailwind.config.js</code> — tudo vive em
+<code>src/app/globals.css</code>, no bloco <code>@theme inline</code>).</p>
+<h3>Identidade de marca</h3>
+<p>Paleta oficial da instituição (referência visual em <code>assets/cores.png</code>, na raiz do repositório
+<code>sis-brindes/</code>, um nível acima deste projeto). Cor principal: <strong>verde institucional</strong>.</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Token</th>
+<th>Uso</th>
+<th>Claro</th>
+<th>Escuro</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>brand-primary</code></td>
+<td>Texto/ícone de destaque, sensível ao tema</td>
+<td><code>#072928</code></td>
+<td><code>#00CC88</code></td>
+</tr>
+<tr>
+<td><code>brand-primary-hover</code></td>
+<td>Hover de elementos com <code>brand-primary</code></td>
+<td><code>#0B6359</code></td>
+<td><code>#00FFB0</code></td>
+</tr>
+<tr>
+<td><code>brand-primary-subtle</code></td>
+<td>Fundo suave (ex.: item ativo da sidebar)</td>
+<td><code>#E7F3F0</code></td>
+<td><code>rgba(0,204,136,.14)</code></td>
+</tr>
+<tr>
+<td><code>brand-solid</code> / <code>brand-solid-hover</code></td>
+<td>Preenchimento sólido com texto branco (botão primário) — <strong>fixo nos dois temas</strong>, não usa a variante clara do dark mode</td>
+<td><code>#072928</code> / <code>#0B6359</code></td>
+<td></td>
+</tr>
+</tbody></table></div>
+<p>O tom escuro do modo claro (<code>#072928</code>) ficaria ilegível como texto sobre fundo escuro, por isso o
+dark mode usa o verde vibrante da mesma família (<code>#00CC88</code>) em vez de reaproveitar o mesmo hex —
+já <code>brand-solid</code> (preenchimento de botão, texto branco em cima) não depende do fundo da página,
+então fica fixo nos dois temas.</p>
+<h4>Cores categóricas / semânticas (<code>src/lib/theme-colors.ts</code>)</h4>
+<pre><code class="language-ts">CHART_COLORS = {
+  primary: &quot;#00CC88&quot;,  // verde institucional (mesma família de brand-primary)
+  accent:  &quot;#00DBFF&quot;,  // ciano, família da paleta oficial
+  purple:  &quot;#5F4AF4&quot;,  // roxo/periwinkle, família da paleta oficial
+  ok:      &quot;#1F9D6E&quot;,  // sucesso — convenção de UX, não é cor de marca
+  warn:    &quot;#D9A441&quot;,  // alerta — convenção de UX
+  crit:    &quot;#D6503F&quot;,  // erro — convenção de UX
+  slate:   &quot;#9B9B97&quot;,  // neutro
+}
+</code></pre>
+<ul>
+<li><strong><code>CATEGORY_COLORS</code></strong> + <code>categoryColor(index)</code>: paleta cíclica (7 cores) para séries sem mapa
+fixo — ex.: uma barra por projeto ou por área, onde a lista de nomes é dinâmica. Ordem
+escolhida para alternar matiz entre barras vizinhas.</li>
+<li><strong><code>ORDER_STATUS_COLOR</code></strong> (<code>src/lib/order-status.ts</code>): mapa fixo, uma cor por status de pedido.
+Os 8 estágios não-terminais seguem uma progressão de matiz própria (<code>STATUS_PALETTE</code>: cinza →
+ciano → azul periwinkle → roxo, à medida que o pedido avança no pipeline); os 2 estágios
+terminais reaproveitam <code>CHART_COLORS.ok</code> (Entregue) e <code>CHART_COLORS.crit</code> (Cancelado). Essa
+mesma cor alimenta tanto a badge de status na tabela de Pedidos quanto a barra correspondente
+no gráfico &quot;Pedidos por status&quot; do Dashboard — um único lugar para ajustar as duas
+visualizações juntas.</li>
+</ul>
+<blockquote>
+<p><strong>Regra ao adicionar uma cor nova</strong>: nunca declarar um hex solto dentro de um componente. Se é
+uma cor de marca/gráfico, adicionar em <code>theme-colors.ts</code>; se é um token de tema (fundo,
+primário), adicionar em <code>globals.css</code>.</p>
+</blockquote>
+<h3>Tipografia e tema</h3>
+<ul>
+<li>Fonte: Geist (via <code>next/font</code>, variável <code>--font-geist-sans</code>), aplicada em <code>body</code> através de
+<code>--font-sans</code>.</li>
+<li>Tema claro/escuro: classe <code>.dark</code> na tag <code>&lt;html&gt;</code>, alternada por <code>ThemeToggle</code>
+(<code>src/components/layout/theme-toggle.tsx</code>) e persistida em <code>localStorage</code>. Um script inline
+(<code>src/components/providers/theme-init-script.tsx</code>) aplica a classe <strong>antes da hidratação</strong> para
+não haver flash de tema errado no carregamento da página.</li>
+</ul>
+<h3>Componentes de UI compartilhados (<code>src/components/ui/</code>)</h3>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Componente</th>
+<th>Propósito</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>Button</code></td>
+<td>variantes <code>primary</code> / <code>secondary</code> / <code>ghost</code> / <code>danger</code> / <code>success</code>; tamanhos <code>sm</code> / <code>md</code></td>
+</tr>
+<tr>
+<td><code>Card</code></td>
+<td>contêiner com borda, sombra suave e cantos arredondados</td>
+</tr>
+<tr>
+<td><code>Modal</code></td>
+<td>diálogo centralizado com overlay, fecha ao clicar fora, animação de entrada</td>
+</tr>
+<tr>
+<td><code>ConfirmDialog</code></td>
+<td>confirmação sim/não sobre uma ação (usado antes de qualquer ação destrutiva ou sensível)</td>
+</tr>
+<tr>
+<td><code>Badge</code></td>
+<td>pílula colorida com marcador (bolinha) — usado para status/papel/etc.</td>
+</tr>
+<tr>
+<td><code>ErrorBanner</code></td>
+<td>alerta inline vermelho, com botão de fechar opcional (<code>onDismiss</code>)</td>
+</tr>
+<tr>
+<td><code>EmptyState</code></td>
+<td>placeholder centralizado (ícone + texto) para listas vazias</td>
+</tr>
+<tr>
+<td><code>PageHeader</code></td>
+<td>título + descrição + ações, padrão em todas as telas</td>
+</tr>
+<tr>
+<td><code>Input</code> / <code>Select</code> / <code>TextArea</code></td>
+<td>campos de formulário com rótulo, mesmo estilo de foco</td>
+</tr>
+<tr>
+<td><code>SaveButton</code></td>
+<td>botão de salvar com estados idle/saving/success (check animado)</td>
+</tr>
+<tr>
+<td><code>ViewToggle</code></td>
+<td>alternância grade/lista (usado em Estoque)</td>
+</tr>
+<tr>
+<td><code>DateRangeFilter</code></td>
+<td>seletor de período com presets (Tudo, Mês atual, Mês anterior, Últimos 3 meses, Este ano)</td>
+</tr>
+</tbody></table></div>
+<p>Ao criar uma tela nova, reaproveitar esses primitivos em vez de estilizar elementos HTML crus —
+é o que mantém a interface consistente entre os módulos.</p>
+
+</section>
+
+<section class="entry" id="auth">
+  <div class="entry-head" style="--dot: var(--purple)">
+    <span class="num">07</span>
+    <span class="tag">Acesso</span>
+  </div>
+  <h2 class="entry-title">Autenticação e segurança</h2>
+  <h3>Visão geral do fluxo</h3>
+<pre><code>Cadastro ──► Confirmação de e-mail ──► Aprovação de um admin ──► Configuração de MFA (1ª vez)
+                                                                          │
+                                                                          ▼
+                                                              Login normal (senha + TOTP/backup code)
+</code></pre>
+<p>Não existe login sem os três: e-mail confirmado, conta aprovada, e MFA validado. Não há &quot;lembrar
+este dispositivo&quot; nem qualquer exceção — todo login pede o código do autenticador (ou um backup
+code).</p>
+<h4>1. Cadastro (<code>POST /api/auth/register</code>)</h4>
+<p>Cria o <code>User</code> com <code>role: USER</code>, <code>status: PENDING</code> (padrão do schema), senha com hash bcrypt
+(custo 12), e envia um e-mail com link de confirmação (<code>VerificationToken</code>, validade 24h). Em
+desenvolvimento, sem <code>EMAIL_API_KEY</code> configurado, o link é apenas <strong>logado no console</strong> do
+servidor em vez de enviado de verdade (<code>src/lib/mail.ts</code>).</p>
+<h4>2. Confirmação de e-mail (<code>POST /api/auth/verify-email</code>)</h4>
+<p>Valida o token (propósito e expiração) e, em uma transação, marca <code>User.emailVerified</code> e apaga o
+token. Sem isso, o login é bloqueado com uma mensagem explícita.</p>
+<h4>3. Aprovação por um administrador</h4>
+<p>Mesmo com e-mail confirmado, <code>status</code> continua <code>PENDING</code> até um <code>ADMIN</code> aprovar em
+<code>/usuarios</code> (<code>PATCH /api/users/[id]</code>, <code>{ status: &quot;ACTIVE&quot; }</code>). <strong>Não existe fluxo de
+autoaprovação</strong> — alguém com papel <code>ADMIN</code> precisa agir. Enquanto pendente, tentar logar retorna
+403 com &quot;Seu cadastro está aguardando aprovação de um administrador.&quot;</p>
+<p>Depois de aprovado, um admin também pode <strong>desativar</strong> o acesso a qualquer momento
+(<code>status: &quot;DEACTIVATED&quot;</code>) — o login passa a ser bloqueado com uma mensagem própria, mas o
+usuário e todo o histórico vinculado a ele continuam no banco (ver &quot;Por que não existe exclusão
+de verdade&quot; abaixo).</p>
+<h4>4. Primeiro login → configuração obrigatória de MFA</h4>
+<p><code>POST /api/auth/login/precheck</code> (chamado pela tela de login) verifica e-mail/senha e o <code>status</code>;
+se <code>mfaEnabled</code> ainda for <code>false</code>, devolve um ticket de bootstrap e o front redireciona para
+<code>/mfa-setup</code>. Lá:</p>
+<ol>
+<li><code>POST /api/auth/mfa/setup</code> gera um secret TOTP novo e o QR code — o secret <strong>ainda não é
+gravado no banco</strong>, viaja apenas dentro de um ticket assinado (<code>mfa-setup-pending</code>, 10 min).</li>
+<li>O usuário escaneia o QR (Google Authenticator, Authy etc.) e digita o primeiro código.</li>
+<li><code>POST /api/auth/mfa/verify</code> valida esse código contra o secret pendente e <strong>só então</strong>
+persiste <code>mfaEnabled: true</code>, <code>mfaSecret</code> (criptografado) e 10 backup codes (hasheados).
+Devolve os backup codes em texto puro <strong>uma única vez</strong> — não há como recuperá-los depois,
+só gerar novos (não há endpoint de regeneração hoje, ver <a href="#manutencao" class="xref"><code>docs/MANUTENCAO.md</code></a>).</li>
+<li>A sessão é criada (<code>signIn(&quot;credentials&quot;, { ticket })</code>) sem pedir o código de novo, já que a
+posse do autenticador acabou de ser comprovada.</li>
+</ol>
+<h4>5. Logins seguintes</h4>
+<p><code>precheck</code> emite um ticket de <code>mfa-challenge</code>; a tela <code>/mfa-challenge</code> pede o código de 6
+dígitos (ou um backup code como alternativa) e chama <code>signIn(&quot;credentials&quot;, { ticket, totpCode })</code>
+— o NextAuth valida tudo dentro de <code>authorize()</code> em <code>src/lib/auth.ts</code>.</p>
+<h3>Tickets assinados (<code>src/lib/tickets.ts</code>)</h3>
+<p>Em vez de reenviar a senha entre as etapas do login, cada etapa emite um ticket HMAC-SHA256
+assinado (verificado com comparação em tempo constante) com expiração curta:</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Propósito</th>
+<th>Emitido em</th>
+<th>Consumido em</th>
+<th>Validade</th>
+<th>Carrega o secret TOTP?</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>mfa-setup-bootstrap</code></td>
+<td><code>login/precheck</code> (MFA ainda não configurado)</td>
+<td><code>mfa/setup</code></td>
+<td>5 min</td>
+<td>não</td>
+</tr>
+<tr>
+<td><code>mfa-setup-pending</code></td>
+<td><code>mfa/setup</code></td>
+<td><code>mfa/verify</code></td>
+<td>10 min</td>
+<td>sim</td>
+</tr>
+<tr>
+<td><code>mfa-challenge</code></td>
+<td><code>login/precheck</code> (MFA já configurado)</td>
+<td><code>authorize()</code> do NextAuth</td>
+<td>5 min</td>
+<td>não</td>
+</tr>
+<tr>
+<td><code>mfa-verified</code></td>
+<td><code>mfa/verify</code> (após validar o 1º código)</td>
+<td><code>authorize()</code> do NextAuth</td>
+<td>5 min</td>
+<td>não</td>
+</tr>
+</tbody></table></div>
+<h3>Criptografia e hashing (<code>src/lib/mfa.ts</code>)</h3>
+<ul>
+<li>Senha de login: bcrypt, custo 12.</li>
+<li><code>mfaSecret</code> (o secret TOTP): <strong>AES-256-GCM</strong>, chave vinda de <code>MFA_ENCRYPTION_KEY</code> (32 bytes em
+hex — gerar com <code>openssl rand -hex 32</code>). O módulo lança erro <strong>na importação</strong> se essa env var
+não estiver no formato certo, então a aplicação nem sobe sem ela configurada corretamente.</li>
+<li>Backup codes: 10 códigos gerados com alfabeto sem caracteres ambíguos, guardados como hash
+bcrypt — cada um funciona uma única vez (<code>consumeBackupCode</code> remove o hash usado do array).</li>
+<li>Comparação de e-mail/senha inexistente usa um <code>DUMMY_HASH</code> fixo para o bcrypt sempre rodar,
+evitando que o tempo de resposta revele se um e-mail existe ou não no banco.</li>
+</ul>
+<h3>Controle de acesso (papéis)</h3>
+<p>Dois papéis: <code>ADMIN</code> e <code>USER</code>. A única checagem de papel do sistema inteiro está centralizada em
+<code>src/lib/require-admin.ts</code> (<code>requireAdmin()</code>), usada pelas rotas <code>api/users/*</code> e pela página
+<code>/usuarios</code> (que redireciona para <code>/dashboard</code> se <code>session.user.role !== &quot;ADMIN&quot;</code>). Não há
+middleware global (<code>src/middleware.ts</code> não existe) — cada rota/página protegida chama
+<code>getServerSession</code> e decide por conta própria; esse é o padrão a seguir se novas áreas
+admin-only forem criadas.</p>
+<h4>O que um <code>ADMIN</code> pode fazer em <code>/usuarios</code></h4>
+<ul>
+<li>Aprovar (<code>PENDING → ACTIVE</code>), desativar/reativar, promover/remover admin, e &quot;excluir&quot;.</li>
+<li><strong>Proteções embutidas</strong> (em <code>api/users/[id]/route.ts</code>):<ul>
+<li>Ninguém pode alterar a própria conta por essa tela (evita se autodesativar/rebaixar por
+engano).</li>
+<li>O sistema nunca deixa remover o último <code>ADMIN</code> ativo — seja por rebaixamento, desativação
+ou exclusão (<code>isLastActiveAdmin()</code>/<code>wouldRemoveLastActiveAdmin()</code>).</li>
+</ul>
+</li>
+</ul>
+<h4>Por que não existe exclusão de verdade na prática</h4>
+<p>Toda ação de estoque/pedido/movimentação/kit exige um autor (<code>onDelete: Restrict</code> nas FKs de
+autoria — ver <a href="#banco" class="xref"><code>docs/BANCO_DE_DADOS.md</code></a>). Por isso, excluir um usuário que já tenha qualquer
+histórico falha com um erro de integridade referencial (Prisma <code>P2003</code>), e a rota devolve uma
+mensagem orientando a desativar em vez de excluir. Só é possível apagar de verdade um usuário que
+nunca tenha criado/alterado nada.</p>
+<h3>Bootstrap do primeiro administrador</h3>
+<p>Não existe fluxo de auto-promoção a admin pela UI (faria sentido seria um risco de segurança
+óbvio). Para colocar o primeiro <code>ADMIN</code> funcional em um banco novo, depois do cadastro normal
+pela tela de registro (ou do seed, ver <a href="#banco" class="xref"><code>docs/BANCO_DE_DADOS.md</code></a>), promova manualmente no banco:</p>
+<pre><code class="language-sql">UPDATE users SET role = &#39;ADMIN&#39;, status = &#39;ACTIVE&#39; WHERE email = &#39;seu-email@dominio.com&#39;;
+</code></pre>
+<p>A partir daí, esse usuário consegue entrar em <code>/usuarios</code> e aprovar/gerenciar os demais pela
+interface normalmente.</p>
+<h3>Variáveis de ambiente relevantes para segurança</h3>
+<p>Ver <code>.env.example</code> na raiz do projeto:</p>
+<ul>
+<li><code>AUTH_SECRET</code> — segredo do NextAuth (sessão JWT). Gerar com <code>openssl rand -base64 32</code>.</li>
+<li><code>MFA_ENCRYPTION_KEY</code> — obrigatória, formato estrito (32 bytes hex), usada para criptografar o
+secret TOTP em repouso.</li>
+<li><code>EMAIL_FROM</code> / <code>EMAIL_API_KEY</code> — envio real de e-mail de confirmação via Resend; sem
+<code>EMAIL_API_KEY</code>, o link é só logado no console (modo dev).</li>
+</ul>
+
+</section>
+
+<section class="entry" id="manutencao">
+  <div class="entry-head" style="--dot: var(--purple)">
+    <span class="num">08</span>
+    <span class="tag">Manutenção</span>
+  </div>
+  <h2 class="entry-title">Guia de manutenção</h2>
+  <h3>Comandos do dia a dia</h3>
+<pre><code class="language-bash"># Ambiente
+docker compose up -d db        # sobe o Postgres local (ver docker-compose.yml)
+npm run dev                    # servidor de desenvolvimento (Turbopack)
+
+# Banco de dados
+npx prisma migrate dev         # aplica/gera migrations em dev (sincroniza o schema)
+npx prisma migrate deploy      # aplica migrations pendentes em produção (não gera novas)
+npx prisma generate            # regenera o client em src/generated/prisma
+npx prisma db seed             # popula dados de demonstração (ver docs/BANCO_DE_DADOS.md)
+npx prisma studio               # inspecionar/editar dados via UI
+
+# Qualidade
+npx tsc --noEmit                # checagem de tipos
+npm run lint                    # ESLint (eslint.config.mjs ignora marketing-ops.jsx, o protótipo de referência)
+npm run build                   # build de produção (também valida tipos e lint)
+</code></pre>
+<p>Não existe <code>npm test</code> — <strong>não há suíte de testes automatizados no projeto hoje</strong>. Validação de
+lógica de negócio até agora foi feita manualmente e com scripts pontuais via <code>npx tsx</code> direto
+contra o Prisma (não versionados). Se for adicionar testes, um bom primeiro alvo é
+<code>src/lib/movements.ts</code> (<code>applyMovement</code>, <code>registerKitOutput</code>) — é onde a lógica transacional mais
+sensível do sistema mora.</p>
+<h3>Lacunas conhecidas (o que existe no schema/código mas não está fechado ponta a ponta)</h3>
+<ul>
+<li><strong>Histórico de auditoria sem tela</strong>: <code>HistoryLog</code> é gravado em toda ação relevante, mas não
+existe nenhuma rota de API nem página que leia esses registros de volta. Se for construir uma
+tela de auditoria, os dados já estão lá — falta só ler.</li>
+<li><strong>Anexos de pedidos em disco local</strong>: <code>Attachment.url</code> aponta para <code>public/uploads/{orderId}/…</code>
+no sistema de arquivos do servidor. Isso <strong>não sobrevive a deploys serverless/múltiplas
+instâncias</strong> (ex.: Vercel) — cada instância teria seu próprio disco efêmero. Antes de ir para
+produção nesse tipo de ambiente, trocar por um provedor de blob storage (S3, Vercel Blob — a
+env var <code>BLOB_READ_WRITE_TOKEN</code> já existe em <code>.env.example</code> para isso, só não está
+conectada a nenhum código ainda).</li>
+<li><strong>Busca do header é decorativa</strong>: o campo de busca em <code>src/components/layout/header.tsx</code> não
+tem <code>onChange</code>/estado — hoje é só visual. Cada módulo (Pedidos/Estoque/Movimentações) tem sua
+própria busca funcional na própria tela.</li>
+<li><strong>Sem fluxo de &quot;esqueci minha senha&quot;</strong>: <code>VerificationToken.purpose</code> já reserva o valor
+<code>&quot;PASSWORD_RESET&quot;</code> no comentário do schema, mas nenhuma rota usa esse valor.</li>
+<li><strong>Sem regeneração de backup codes de MFA</strong>: os 10 códigos são mostrados uma única vez no
+primeiro setup; não há rota para gerar um novo lote se o usuário os perder (só resta um admin
+desativar/reativar o usuário para forçar nova configuração de MFA — verificar se esse efeito
+colateral é aceitável antes de usar como workaround).</li>
+<li><strong>Exclusão de Pedido é sempre definitiva</strong>: diferente de Estoque/Kits/Áreas/Usuários, a rota
+<code>DELETE /api/orders/[id]</code> não verifica se existem movimentações vinculadas antes de apagar —
+não há bloqueio por integridade referencial ali. Se um pedido tiver gerado uma movimentação de
+entrega, essa movimentação permanece órfã (o FK <code>Movement.order</code> é <code>SetNull</code>).</li>
+<li><strong>Sem middleware global</strong>: proteção de rota é feita ad hoc em cada página/rota
+(<code>getServerSession</code> + redirect/401), não em um <code>src/middleware.ts</code> central. Ao adicionar uma
+tela nova protegida, replicar o padrão já usado (ver <code>src/app/(app)/layout.tsx</code> para páginas,
+<code>src/lib/require-admin.ts</code> para rotas admin-only) em vez de introduzir um mecanismo novo.</li>
+</ul>
+<h3>Documentação previamente existente (histórica)</h3>
+<p>Três arquivos na raiz do projeto foram escritos <strong>antes</strong> da aplicação existir, como briefing
+para a geração inicial do código, e não foram atualizados desde então:</p>
+<ul>
+<li><code>README.md</code> — original: descrevia o pacote de migração entregue ao Claude Code. Foi substituído
+por uma versão nova apontando para <code>docs/</code> (este diretório).</li>
+<li><code>PROJECT_STRUCTURE.md</code> — árvore de pastas planejada e mapeamento protótipo→produção. Contém
+itens que não foram implementados como descrito (ex.: previa <code>pedidos/[id]/page.tsx</code> como
+página de detalhe — na prática a edição de pedido é feita em um modal na própria listagem; previa
+<code>api/search</code> e <code>api/history</code>, que não existem). Mantido só como registro histórico da intenção
+original — para a estrutura real, ver <a href="#arquitetura" class="xref"><code>docs/ARQUITETURA.md</code></a>.</li>
+<li><a href="#deploy" class="xref"><code>DEPLOYMENT.md</code></a> — guia de deploy escrito antes do código existir. Continua majoritariamente
+válido (Neon/Supabase/Railway + Vercel, variáveis de ambiente, <code>migrate deploy</code>), com uma
+ressalva: a recomendação de usar Vercel Blob para anexos ainda é só uma recomendação — o código
+atual usa disco local (ver &quot;Lacunas conhecidas&quot; acima).</li>
+</ul>
+<h3>Onde adicionar o quê (convenções para evoluir o sistema)</h3>
+<ul>
+<li><strong>Regra de negócio nova envolvendo saldo de estoque</strong>: adicionar em <code>src/lib/movements.ts</code> (ou
+um arquivo novo em <code>src/lib/</code>, mas sempre chamado por dentro de uma rota, nunca com lógica de
+transação duplicada na rota em si).</li>
+<li><strong>Tela nova dentro da área logada</strong>: página em <code>src/app/(app)/&lt;nome&gt;/page.tsx</code> (Server
+Component, busca dados + mapeia para DTO em <code>src/types/</code>), componente client em
+<code>src/components/&lt;nome&gt;/</code>, entrada em <code>NAV_ITEMS</code> (ou <code>ADMIN_NAV_ITEM</code>, se só admin) em
+<code>src/components/layout/sidebar.tsx</code>.</li>
+<li><strong>Cor nova em gráfico/badge</strong>: sempre em <code>src/lib/theme-colors.ts</code> (ou token em
+<code>globals.css</code> se for parte do tema), nunca um hex solto dentro do componente — ver
+<a href="#design" class="xref"><code>docs/DESIGN_SYSTEM.md</code></a>.</li>
+<li><strong>Ação administrativa nova (admin-only)</strong>: usar <code>requireAdmin()</code> de <code>src/lib/require-admin.ts</code>
+na rota; se alterar/excluir um usuário, replicar as proteções de auto-modificação e de
+&quot;último admin ativo&quot; já existentes em <code>api/users/[id]/route.ts</code>.</li>
+</ul>
+
+</section>
+
+<section class="entry" id="deploy">
+  <div class="entry-head" style="--dot: var(--purple)">
+    <span class="num">09</span>
+    <span class="tag">Operação</span>
+  </div>
+  <h2 class="entry-title">Deploy</h2>
+  <p>Este passo a passo é para depois que o Claude Code já tiver o projeto Next.js
+funcionando localmente (a partir do pacote de migração). Deploy em si é uma
+sequência de decisões de infraestrutura + comandos — recomendo rodar cada
+etapa com o Claude Code, mas os pontos de decisão abaixo são seus.</p>
+<h3>1. Banco de dados gerenciado (Postgres)</h3>
+<p>O <code>docker-compose.yml</code> do pacote é só para desenvolvimento local. Para
+produção, escolha um Postgres gerenciado:</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Opção</th>
+<th>Quando faz sentido</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>Neon</strong></td>
+<td>Serverless, free tier generoso, integra direto com a Vercel (recomendado se o deploy for na Vercel)</td>
+</tr>
+<tr>
+<td><strong>Supabase</strong></td>
+<td>Se no futuro você quiser aproveitar auth/storage prontos da própria plataforma</td>
+</tr>
+<tr>
+<td><strong>Railway</strong></td>
+<td>Simples, bom se preferir tudo (app + banco) no mesmo painel</td>
+</tr>
+</tbody></table></div>
+<p>Depois de criar o banco, você recebe uma <code>DATABASE_URL</code> de produção — ela
+substitui a de desenvolvimento no passo 4.</p>
+<h3>2. Hospedagem da aplicação</h3>
+<p>Como é Next.js, o caminho mais direto é a <strong>Vercel</strong> (mesmo time por trás do
+Next.js, zero configuração de servidor). Alternativas: Railway ou um VPS
+próprio, se o FECAP/departamento já tiver preferência de infraestrutura.</p>
+<h3>3. Upload de anexos</h3>
+<blockquote>
+<p><strong>Importante — isto ainda não está implementado</strong>: o código atual salva os anexos de pedidos
+em disco local (<code>public/uploads/{orderId}/...</code>, ver <code>src/app/api/orders/[id]/attachments/</code>).
+Isso funciona em desenvolvimento e em hospedagem com disco persistente, mas <strong>não sobrevive a
+deploys serverless/múltiplas instâncias</strong> (ex.: Vercel) — cada instância teria seu próprio
+disco efêmero e os arquivos se perderiam. Antes de ir para esse tipo de ambiente, é preciso
+trocar a implementação por um provedor de blob storage.</p>
+</blockquote>
+<p>Se for hospedar na Vercel, use <strong>Vercel Blob</strong> — é a integração mais direta
+para os anexos de pedidos (PDFs, orçamentos, notas fiscais). Se a hospedagem
+for outra, um bucket S3 (ou equivalente) resolve. A env var <code>BLOB_READ_WRITE_TOKEN</code>
+já existe em <code>.env.example</code> para isso, mas nenhum código a utiliza ainda.</p>
+<h3>4. Variáveis de ambiente de produção</h3>
+<p>No painel da hospedagem, configure (mesmas chaves do <code>.env.example</code>, valores
+de produção):</p>
+<ul>
+<li><code>DATABASE_URL</code> → a URL do Postgres gerenciado (passo 1)</li>
+<li><code>AUTH_SECRET</code> → gere um novo, diferente do de desenvolvimento</li>
+<li><code>ADMIN_EMAIL</code> → e-mail real de quem vai logar como administrador</li>
+<li><code>BLOB_READ_WRITE_TOKEN</code> → token do provedor de storage escolhido (passo 3)</li>
+<li><code>EMAIL_FROM</code> / <code>EMAIL_API_KEY</code> → provedor de envio de e-mail de verificação de cadastro (ex: Resend)</li>
+</ul>
+<h3>5. Migrations em produção</h3>
+<p>Diferente do <code>prisma migrate dev</code> (usado em desenvolvimento), produção usa:</p>
+<pre><code>npx prisma migrate deploy
+</code></pre>
+<p>Isso aplica as migrations já geradas sem tentar criar novas — é o comando
+seguro para rodar no pipeline de deploy (a Vercel pode rodar isso
+automaticamente via <code>postinstall</code> ou build command).</p>
+<h3>6. Domínio</h3>
+<p>Se o departamento já tiver um domínio ou subdomínio institucional (ex.
+<code>marketingops.fecap.br</code>), aponte o DNS para a hospedagem escolhida. Sem
+domínio próprio, a Vercel já fornece uma URL <code>*.vercel.app</code> funcional.</p>
+<h3>7. Checklist antes de anunciar para o time</h3>
+<ul>
+<li><input disabled="" type="checkbox"> Cadastro por e-mail testado em produção, incluindo o e-mail de verificação chegando de fato (não só no console de dev)</li>
+<li><input disabled="" type="checkbox"> Configuração de MFA testada com um autenticador real (Google Authenticator/Authy), incluindo os backup codes</li>
+<li><input disabled="" type="checkbox"> Login completo (senha + código MFA) testado em produção, não só localmente</li>
+<li><input disabled="" type="checkbox"> Confirme que cada item de estoque, movimentação e saída de kit exibe o nome de quem fez a ação — não só a data</li>
+<li><input disabled="" type="checkbox"> Um pedido, uma movimentação e uma saída de kit de teste, ponta a ponta</li>
+<li><input disabled="" type="checkbox"> Backup automático do banco configurado (Neon/Supabase têm isso nativo;
+confirme a retenção)</li>
+<li><input disabled="" type="checkbox"> Anexos de teste sobem e abrem corretamente</li>
+<li><input disabled="" type="checkbox"> Alguém além de você sabe onde estão as credenciais (não fica só com uma pessoa)</li>
+</ul>
+<h3>Prompt para colar no Claude Code (fase de deploy)</h3>
+<p>Use depois que o app já estiver rodando localmente e testado:</p>
+<pre><code>O projeto Atlas já está funcionando localmente. Agora quero preparar
+o deploy de produção seguindo DEPLOYMENT.md:
+
+1. Me ajude a decidir entre Neon, Supabase ou Railway para o Postgres de
+   produção, considerando que a hospedagem será na Vercel.
+2. Configure o projeto para rodar `prisma migrate deploy` automaticamente no
+   build da Vercel (não `migrate dev`).
+3. Liste exatamente quais variáveis de ambiente preciso cadastrar no painel
+   da Vercel, com base no .env.example.
+4. Depois que eu confirmar as credenciais, rode o build de produção local
+   (`next build`) para garantir que não há erros antes do primeiro deploy.
+5. Me dê o checklist final do DEPLOYMENT.md revisado com o que já foi feito.
+
+Vá confirmando comigo a cada decisão de infraestrutura antes de seguir.
+</code></pre>
+
+</section>
+    </div>
+  </main>
+</div>
+
+<button type="button" class="back-to-top" id="backToTop">↑ topo</button>
+
+<script>
+  (function () {
+    var sections = Array.prototype.slice.call(document.querySelectorAll("section.entry"));
+    var links = Array.prototype.slice.call(document.querySelectorAll(".rail nav a"));
+    var linkById = {};
+    links.forEach(function (a) { linkById[a.getAttribute("href").slice(1)] = a; });
+
+    if ("IntersectionObserver" in window && sections.length) {
+      var observer = new IntersectionObserver(
+        function (entries) {
+          entries.forEach(function (entry) {
+            var link = linkById[entry.target.id];
+            if (!link) return;
+            if (entry.isIntersecting) {
+              links.forEach(function (a) { a.classList.remove("active"); });
+              link.classList.add("active");
+            }
+          });
+        },
+        { rootMargin: "-10% 0px -70% 0px" }
+      );
+      sections.forEach(function (s) { observer.observe(s); });
+    }
+
+    var backToTop = document.getElementById("backToTop");
+    window.addEventListener(
+      "scroll",
+      function () {
+        backToTop.classList.toggle("show", window.scrollY > 600);
+      },
+      { passive: true }
+    );
+    backToTop.addEventListener("click", function () {
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    });
+  })();
+</script>
