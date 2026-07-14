@@ -27,9 +27,17 @@ próprio, se o FECAP/departamento já tiver preferência de infraestrutura.
 
 ## 3. Upload de anexos
 
+> **Importante — isto ainda não está implementado**: o código atual salva os anexos de pedidos
+> em disco local (`public/uploads/{orderId}/...`, ver `src/app/api/orders/[id]/attachments/`).
+> Isso funciona em desenvolvimento e em hospedagem com disco persistente, mas **não sobrevive a
+> deploys serverless/múltiplas instâncias** (ex.: Vercel) — cada instância teria seu próprio
+> disco efêmero e os arquivos se perderiam. Antes de ir para esse tipo de ambiente, é preciso
+> trocar a implementação por um provedor de blob storage.
+
 Se for hospedar na Vercel, use **Vercel Blob** — é a integração mais direta
 para os anexos de pedidos (PDFs, orçamentos, notas fiscais). Se a hospedagem
-for outra, um bucket S3 (ou equivalente) resolve.
+for outra, um bucket S3 (ou equivalente) resolve. A env var `BLOB_READ_WRITE_TOKEN`
+já existe em `.env.example` para isso, mas nenhum código a utiliza ainda.
 
 ## 4. Variáveis de ambiente de produção
 

@@ -1,5 +1,12 @@
 # Estrutura de pastas alvo (Next.js App Router)
 
+> **Documento histórico**: isto foi o planejamento escrito *antes* da aplicação existir, para
+> orientar a geração inicial do código. A estrutura real final difere em alguns pontos (ex.:
+> edição de pedido acabou sendo um modal na listagem, não uma página `pedidos/[id]/`; as rotas
+> `api/search` e `api/history` planejadas aqui não foram implementadas). Para a estrutura e
+> arquitetura **atuais**, ver [`docs/ARQUITETURA.md`](docs/ARQUITETURA.md). Mantido só como
+> registro da intenção original.
+
 Peça ao Claude Code para gerar exatamente esta estrutura (`npx create-next-app@latest` com TypeScript, Tailwind e App Router, depois ajustar):
 
 ```

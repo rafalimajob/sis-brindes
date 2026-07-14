@@ -8,7 +8,7 @@
  */
 import "dotenv/config";
 import { PrismaPg } from "@prisma/adapter-pg";
-import { PrismaClient, OrderStatus, MovementDirection, MovementType, UserRole } from "../src/generated/prisma/client";
+import { PrismaClient, OrderStatus, MovementDirection, MovementType, UserRole, UserStatus } from "../src/generated/prisma/client";
 
 const adapter = new PrismaPg({ connectionString: process.env.DATABASE_URL });
 const prisma = new PrismaClient({ adapter });
@@ -23,6 +23,9 @@ async function main() {
       // troque por um hash real (bcrypt/argon2) antes de subir para produção
       passwordHash: "REPLACE_WITH_REAL_HASH",
       role: UserRole.ADMIN,
+      // ACTIVE explícito: sem isso o admin nasceria PENDING (padrão do schema) e
+      // ninguém existiria no banco para aprová-lo, travando o primeiro login.
+      status: UserStatus.ACTIVE,
       // MFA fica desativado no seed — cada usuário configura no primeiro login,
       // e a partir daí todo login exige o código, sem exceção.
       mfaEnabled: false,
