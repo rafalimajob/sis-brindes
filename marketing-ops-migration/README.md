@@ -1,8 +1,8 @@
-# Marketing Ops
+# Atlas
 
-Aplicação interna para o Departamento de Marketing controlar pedidos de compra, estoque,
-movimentações, kits, consumo por área da instituição e relatórios — substituindo o controle por
-planilhas.
+**Atlas** é o sistema desenvolvido dentro do ecossistema **Marketing Ops** para o Departamento de
+Marketing controlar pedidos de compra, estoque, movimentações, kits, consumo por área da
+instituição e relatórios — substituindo o controle por planilhas.
 
 Stack: **Next.js 16 + React 19 + PostgreSQL + Prisma 7**, autenticação própria com MFA (TOTP)
 obrigatório e aprovação de cadastro por administrador.

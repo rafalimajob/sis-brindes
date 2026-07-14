@@ -9,11 +9,12 @@ export default function AuthLayout({ children }: { children: React.ReactNode }) 
       />
       <header className="relative flex items-center justify-between px-6 py-4">
         <span className="flex items-center gap-2.5">
-          <span className="flex h-7 w-7 items-center justify-center rounded-md bg-brand-solid text-xs font-bold text-white">
-            M
+          <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-md bg-brand-solid text-xs font-bold text-white">
+            A
           </span>
-          <span className="text-sm font-semibold tracking-tight text-zinc-900 dark:text-zinc-50">
-            Marketing Ops
+          <span className="flex flex-col leading-tight">
+            <span className="text-sm font-semibold tracking-tight text-zinc-900 dark:text-zinc-50">Atlas</span>
+            <span className="text-[11px] text-zinc-400 dark:text-zinc-500">Marketing Ops</span>
           </span>
         </span>
         <ThemeToggle />

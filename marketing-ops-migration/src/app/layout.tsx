@@ -15,7 +15,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Marketing Ops",
+  title: "Atlas | Marketing Ops",
   description: "Gestão de pedidos de compra e estoque do Departamento de Marketing",
 };
 

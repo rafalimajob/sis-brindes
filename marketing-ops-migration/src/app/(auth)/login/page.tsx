@@ -39,7 +39,7 @@ export default function LoginPage() {
     <form onSubmit={handleSubmit} className="space-y-4">
       <div>
         <h1 className="text-xl font-semibold tracking-tight text-zinc-900 dark:text-zinc-50">Entrar</h1>
-        <p className="mt-0.5 text-sm text-zinc-500 dark:text-zinc-400">Acesse sua conta do Marketing Ops</p>
+        <p className="mt-0.5 text-sm text-zinc-500 dark:text-zinc-400">Acesse sua conta do Atlas</p>
       </div>
 
       {error && <ErrorBanner message={error} onDismiss={() => setError(null)} />}

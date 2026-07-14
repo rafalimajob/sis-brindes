@@ -17,9 +17,9 @@ export async function sendVerificationEmail(to: string, verifyUrl: string): Prom
   const { Resend } = await import("resend");
   const resend = new Resend(apiKey);
   await resend.emails.send({
-    from: process.env.EMAIL_FROM ?? "Marketing Ops <no-reply@marketingops.local>",
+    from: process.env.EMAIL_FROM ?? "Atlas <no-reply@atlas.local>",
     to,
-    subject: "Confirme seu cadastro — Marketing Ops",
-    html: `<p>Olá! Clique no link abaixo para confirmar seu cadastro no Marketing Ops:</p><p><a href="${verifyUrl}">${verifyUrl}</a></p><p>Se você não solicitou este cadastro, ignore este e-mail.</p>`,
+    subject: "Confirme seu cadastro — Atlas",
+    html: `<p>Olá! Clique no link abaixo para confirmar seu cadastro no Atlas:</p><p><a href="${verifyUrl}">${verifyUrl}</a></p><p>Se você não solicitou este cadastro, ignore este e-mail.</p>`,
   });
 }

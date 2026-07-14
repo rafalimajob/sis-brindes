@@ -1,4 +1,4 @@
-# Marketing Ops — Guia de deploy para produção
+# Atlas — Guia de deploy para produção
 
 Este passo a passo é para depois que o Claude Code já tiver o projeto Next.js
 funcionando localmente (a partir do pacote de migração). Deploy em si é uma
@@ -85,7 +85,7 @@ domínio próprio, a Vercel já fornece uma URL `*.vercel.app` funcional.
 Use depois que o app já estiver rodando localmente e testado:
 
 ```
-O projeto Marketing Ops já está funcionando localmente. Agora quero preparar
+O projeto Atlas já está funcionando localmente. Agora quero preparar
 o deploy de produção seguindo DEPLOYMENT.md:
 
 1. Me ajude a decidir entre Neon, Supabase ou Railway para o Postgres de

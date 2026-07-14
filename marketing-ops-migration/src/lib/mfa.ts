@@ -2,7 +2,7 @@ import { randomBytes, randomInt, createCipheriv, createDecipheriv } from "crypto
 import { generateSecret, verify, generateURI } from "otplib";
 import bcrypt from "bcrypt";
 
-const ISSUER = "Marketing Ops";
+const ISSUER = "Atlas";
 const ENCRYPTION_KEY = Buffer.from(process.env.MFA_ENCRYPTION_KEY ?? "", "hex");
 
 if (ENCRYPTION_KEY.length !== 32) {
