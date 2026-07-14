@@ -2,16 +2,25 @@
 
 import { useState } from "react";
 import { signOut, useSession } from "next-auth/react";
-import { Search, LogOut } from "lucide-react";
+import { Search, LogOut, Menu } from "lucide-react";
 import { ThemeToggle } from "@/components/layout/theme-toggle";
 
-export function Header() {
+export function Header({ onOpenMobileNav }: { onOpenMobileNav?: () => void }) {
   const { data: session } = useSession();
   const [menuOpen, setMenuOpen] = useState(false);
 
   return (
-    <header className="flex h-14 items-center justify-between gap-4 border-b border-zinc-200 bg-white px-6 dark:border-zinc-800 dark:bg-zinc-950">
-      <div className="relative w-full max-w-sm">
+    <header className="flex h-14 items-center justify-between gap-2 border-b border-zinc-200 bg-white px-3 dark:border-zinc-800 dark:bg-zinc-950 sm:gap-4 sm:px-6">
+      <button
+        type="button"
+        onClick={onOpenMobileNav}
+        aria-label="Abrir menu"
+        className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg text-zinc-600 hover:bg-zinc-100 dark:text-zinc-300 dark:hover:bg-zinc-800 md:hidden"
+      >
+        <Menu size={20} />
+      </button>
+
+      <div className="relative hidden w-full max-w-sm sm:block">
         <Search size={16} className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-zinc-400" />
         <input
           type="search"
