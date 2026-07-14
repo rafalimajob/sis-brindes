@@ -1029,7 +1029,7 @@ tratamento local de <code>P2002</code> (conflito de unicidade) e <code>P2003</co
 <tr>
 <td><code>/api/auth/login/precheck</code></td>
 <td>POST</td>
-<td>Valida e-mail/senha/status; emite ticket de MFA setup ou challenge</td>
+<td>Valida e-mail/senha/status; emite ticket de MFA setup, challenge, ou (se houver cookie de confiança válido) login direto</td>
 </tr>
 <tr>
 <td><code>/api/auth/mfa/setup</code></td>
@@ -1040,6 +1040,11 @@ tratamento local de <code>P2002</code> (conflito de unicidade) e <code>P2003</co
 <td><code>/api/auth/mfa/verify</code></td>
 <td>POST</td>
 <td>Confirma 1º código, persiste MFA, devolve backup codes</td>
+</tr>
+<tr>
+<td><code>/api/auth/trust-device</code></td>
+<td>POST</td>
+<td>Sessão obrigatória; grava o cookie httpOnly &quot;confiar neste navegador&quot; (30 dias)</td>
 </tr>
 <tr>
 <td><code>/api/auth/[...nextauth]</code></td>
@@ -1431,9 +1436,9 @@ não haver flash de tema errado no carregamento da página.</li>
                                                                           ▼
                                                               Login normal (senha + TOTP/backup code)
 </code></pre>
-<p>Não existe login sem os três: e-mail confirmado, conta aprovada, e MFA validado. Não há &quot;lembrar
-este dispositivo&quot; nem qualquer exceção — todo login pede o código do autenticador (ou um backup
-code).</p>
+<p>Não existe login sem os três: e-mail confirmado, conta aprovada, e MFA validado. A única exceção
+ao terceiro item é o navegador marcado como confiável por até 30 dias (ver &quot;Confiar neste
+navegador&quot; abaixo) — a senha, porém, <strong>nunca</strong> é dispensada, em nenhum cenário.</p>
 <h4>1. Cadastro (<code>POST /api/auth/register</code>)</h4>
 <p>Cria o <code>User</code> com <code>role: USER</code>, <code>status: PENDING</code> (padrão do schema), senha com hash bcrypt
 (custo 12), e envia um e-mail com link de confirmação (<code>VerificationToken</code>, validade 24h). Em
@@ -1469,10 +1474,40 @@ posse do autenticador acabou de ser comprovada.</li>
 <h4>5. Logins seguintes</h4>
 <p><code>precheck</code> emite um ticket de <code>mfa-challenge</code>; a tela <code>/mfa-challenge</code> pede o código de 6
 dígitos (ou um backup code como alternativa) e chama <code>signIn(&quot;credentials&quot;, { ticket, totpCode })</code>
-— o NextAuth valida tudo dentro de <code>authorize()</code> em <code>src/lib/auth.ts</code>.</p>
+— o NextAuth valida tudo dentro de <code>authorize()</code> em <code>src/lib/auth.ts</code>. <strong>Exceção</strong>: se o navegador
+tiver o cookie de confiança válido para essa conta (ver seção abaixo), <code>precheck</code> pula direto para
+o passo 6 sem pedir TOTP.</p>
+<h4>6. Confiar neste navegador (30 dias)</h4>
+<p>Na tela de configuração inicial do MFA (após validar o 1º código) e na tela de desafio de todo
+login seguinte, existe um checkbox <strong>&quot;Confiar neste navegador por 30 dias&quot;</strong>. Ao marcar:</p>
+<ol>
+<li>Depois que o <code>signIn</code> estabelece a sessão, o client chama <code>POST /api/auth/trust-device</code>
+(sessão obrigatória).</li>
+<li>Essa rota emite um ticket de propósito <code>trusted-device</code> (HMAC assinado, 30 dias) e grava como
+cookie <strong>httpOnly, <code>secure</code> em produção, <code>sameSite: lax</code></strong> — nunca acessível via JS no
+navegador.</li>
+<li>Em cada <code>login/precheck</code> seguinte, se <code>user.mfaEnabled</code> for <code>true</code>, o servidor primeiro checa
+esse cookie: se válido e o <code>userId</code> dentro dele bater com o usuário que está logando, emite um
+ticket de propósito <code>trusted-device-login</code> (5 min) em vez de <code>mfa-challenge</code> — o front então
+chama <code>signIn</code> direto com esse ticket, sem pedir TOTP nem backup code.</li>
+</ol>
+<p><strong>O que continua igual, sem exceção</strong>: a senha é sempre exigida em todo login, independente do
+cookie. O cookie só dispensa o <em>segundo fator</em>, nunca o primeiro. <code>authorize()</code> também
+re-valida ao vivo no banco (<code>emailVerified</code>, <code>mfaEnabled</code>, <code>status === &quot;ACTIVE&quot;</code>) antes de aceitar
+o ticket — se o admin desativar a conta ou o MFA for reconfigurado nesse meio-tempo, o cookie
+antigo deixa de funcionar automaticamente, mesmo antes de expirar.</p>
+<p><strong>Escopo</strong>: o cookie é assinado com o <code>userId</code> embutido — ele só libera login sem TOTP para a
+<em>mesma conta</em> que o gerou. Se outra pessoa usar o mesmo navegador com um e-mail diferente, o
+cookie simplesmente não bate e o fluxo normal de MFA é exigido.</p>
+<p><strong>Trade-off aceito conscientemente</strong>: um navegador confiável comprometido/roubado dentro da
+janela de 30 dias permite entrar só com a senha daquela conta. Não há hoje uma tela de &quot;gestão de
+dispositivos confiáveis&quot; para listar/revogar cookies individualmente — a única forma de revogar
+todos de uma vez é gerar um novo <code>AUTH_SECRET</code> (invalida todos os tickets/cookies assinados do
+sistema inteiro, inclusive sessões ativas) ou aguardar a expiração natural de 30 dias.</p>
 <h3>Tickets assinados (<code>src/lib/tickets.ts</code>)</h3>
 <p>Em vez de reenviar a senha entre as etapas do login, cada etapa emite um ticket HMAC-SHA256
-assinado (verificado com comparação em tempo constante) com expiração curta:</p>
+assinado (verificado com comparação em tempo constante) com expiração curta (exceto o cookie de
+confiança, que é de propósito intencionalmente longo):</p>
 <div class="table-wrap"><table>
 <thead>
 <tr>
@@ -1507,6 +1542,20 @@ assinado (verificado com comparação em tempo constante) com expiração curta:
 <tr>
 <td><code>mfa-verified</code></td>
 <td><code>mfa/verify</code> (após validar o 1º código)</td>
+<td><code>authorize()</code> do NextAuth</td>
+<td>5 min</td>
+<td>não</td>
+</tr>
+<tr>
+<td><code>trusted-device</code></td>
+<td><code>POST /api/auth/trust-device</code> (cookie httpOnly)</td>
+<td><code>login/precheck</code> (leitura do cookie)</td>
+<td>30 dias</td>
+<td>não</td>
+</tr>
+<tr>
+<td><code>trusted-device-login</code></td>
+<td><code>login/precheck</code> (cookie de confiança válido)</td>
 <td><code>authorize()</code> do NextAuth</td>
 <td>5 min</td>
 <td>não</td>
