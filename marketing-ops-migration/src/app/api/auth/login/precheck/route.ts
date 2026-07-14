@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import bcrypt from "bcrypt";
 import { prisma } from "@/lib/prisma";
-import { issueTicket } from "@/lib/tickets";
+import { issueTicket, verifyTicket, TRUSTED_DEVICE_COOKIE } from "@/lib/tickets";
 
 // Hash "dummy" usado para manter o tempo de resposta parecido quando o e-mail
 // não existe, evitando que a latência revele se uma conta existe ou não.
@@ -45,6 +45,13 @@ export async function POST(request: NextRequest) {
   }
 
   if (user.mfaEnabled) {
+    const trustCookie = request.cookies.get(TRUSTED_DEVICE_COOKIE)?.value;
+    const trusted = trustCookie ? verifyTicket(trustCookie, "trusted-device") : null;
+    if (trusted && trusted.userId === user.id) {
+      const ticket = issueTicket("trusted-device-login", user.id, user.email);
+      return NextResponse.json({ mfaEnabled: true, trustedDevice: true, ticket });
+    }
+
     const ticket = issueTicket("mfa-challenge", user.id, user.email);
     return NextResponse.json({ mfaEnabled: true, ticket });
   }

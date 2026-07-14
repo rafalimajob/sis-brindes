@@ -5,6 +5,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { signIn } from "next-auth/react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
 import { ErrorBanner } from "@/components/ui/error-banner";
 
 function MfaChallengeInner() {
@@ -13,6 +14,7 @@ function MfaChallengeInner() {
 
   const [useBackupCode, setUseBackupCode] = useState(false);
   const [code, setCode] = useState("");
+  const [trustDevice, setTrustDevice] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -37,6 +39,11 @@ function MfaChallengeInner() {
       setLoading(false);
       return;
     }
+
+    if (trustDevice) {
+      await fetch("/api/auth/trust-device", { method: "POST" }).catch(() => {});
+    }
+
     router.push("/dashboard");
   }
 
@@ -66,6 +73,12 @@ function MfaChallengeInner() {
         className={useBackupCode ? undefined : "text-center font-mono text-lg tracking-[0.4em]"}
         required
         autoFocus
+      />
+
+      <Checkbox
+        label="Confiar neste navegador por 30 dias"
+        checked={trustDevice}
+        onChange={(e) => setTrustDevice(e.target.checked)}
       />
 
       <Button type="submit" disabled={loading || !code} className="w-full">

@@ -35,6 +35,15 @@ export const authOptions: NextAuthOptions = {
           return toSessionUser(user);
         }
 
+        // Ticket emitido pelo precheck quando o cookie de "confiar neste navegador" (30 dias)
+        // já comprovou a posse do 2º fator antes — pula o TOTP desta vez.
+        const trusted = verifyTicket(ticket, "trusted-device-login");
+        if (trusted) {
+          const user = await prisma.user.findUnique({ where: { id: trusted.userId } });
+          if (!user || !user.emailVerified || !user.mfaEnabled || user.status !== "ACTIVE") return null;
+          return toSessionUser(user);
+        }
+
         // Login normal (usuário já tem MFA configurado): exige TOTP ou backup code.
         const challenge = verifyTicket(ticket, "mfa-challenge");
         if (!challenge) return null;

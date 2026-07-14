@@ -17,9 +17,10 @@ Todas as rotas ficam sob `src/app/api/`. Convenções gerais:
 |---|---|---|
 | `/api/auth/register` | POST | Cria usuário (`PENDING`), envia e-mail de confirmação |
 | `/api/auth/verify-email` | POST | Confirma e-mail via token |
-| `/api/auth/login/precheck` | POST | Valida e-mail/senha/status; emite ticket de MFA setup ou challenge |
+| `/api/auth/login/precheck` | POST | Valida e-mail/senha/status; emite ticket de MFA setup, challenge, ou (se houver cookie de confiança válido) login direto |
 | `/api/auth/mfa/setup` | POST | Gera secret TOTP + QR code (não persiste ainda) |
 | `/api/auth/mfa/verify` | POST | Confirma 1º código, persiste MFA, devolve backup codes |
+| `/api/auth/trust-device` | POST | Sessão obrigatória; grava o cookie httpOnly "confiar neste navegador" (30 dias) |
 | `/api/auth/[...nextauth]` | GET/POST | Handler padrão do NextAuth (sessão, callback de credenciais) |
 
 Detalhe completo do fluxo: `docs/AUTENTICACAO_E_SEGURANCA.md`.

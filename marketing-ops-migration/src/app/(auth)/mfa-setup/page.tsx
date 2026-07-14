@@ -6,6 +6,7 @@ import { signIn } from "next-auth/react";
 import Image from "next/image";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
 import { ErrorBanner } from "@/components/ui/error-banner";
 
 type Step = "loading" | "scan" | "backup-codes" | "error";
@@ -25,6 +26,7 @@ function MfaSetupInner() {
   const [backupCodes, setBackupCodes] = useState<string[]>([]);
   const [loginTicket, setLoginTicket] = useState("");
   const [finishing, setFinishing] = useState(false);
+  const [trustDevice, setTrustDevice] = useState(false);
 
   useEffect(() => {
     if (!bootstrapTicket) return;
@@ -77,6 +79,9 @@ function MfaSetupInner() {
       setFinishing(false);
       return;
     }
+    if (trustDevice) {
+      await fetch("/api/auth/trust-device", { method: "POST" }).catch(() => {});
+    }
     router.push("/dashboard");
   }
 
@@ -110,6 +115,11 @@ function MfaSetupInner() {
           ))}
         </div>
         {error && <ErrorBanner message={error} onDismiss={() => setError(null)} />}
+        <Checkbox
+          label="Confiar neste navegador por 30 dias"
+          checked={trustDevice}
+          onChange={(e) => setTrustDevice(e.target.checked)}
+        />
         <Button onClick={handleFinish} disabled={finishing} className="w-full">
           {finishing ? "Entrando..." : "Já salvei meus códigos, continuar"}
         </Button>

@@ -2,6 +2,7 @@
 
 import { useState, FormEvent } from "react";
 import { useRouter } from "next/navigation";
+import { signIn } from "next-auth/react";
 import Link from "next/link";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -26,6 +27,13 @@ export default function LoginPage() {
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data.error ?? "Não foi possível entrar.");
+
+      if (data.trustedDevice) {
+        const result = await signIn("credentials", { ticket: data.ticket, redirect: false });
+        if (result?.error) throw new Error("Não foi possível entrar. Tente novamente.");
+        router.push("/dashboard");
+        return;
+      }
 
       const target = data.mfaEnabled ? "/mfa-challenge" : "/mfa-setup";
       router.push(`${target}?ticket=${encodeURIComponent(data.ticket)}`);

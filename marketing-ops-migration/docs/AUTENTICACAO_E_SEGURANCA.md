@@ -9,9 +9,9 @@ Cadastro ──► Confirmação de e-mail ──► Aprovação de um admin ─
                                                               Login normal (senha + TOTP/backup code)
 ```
 
-Não existe login sem os três: e-mail confirmado, conta aprovada, e MFA validado. Não há "lembrar
-este dispositivo" nem qualquer exceção — todo login pede o código do autenticador (ou um backup
-code).
+Não existe login sem os três: e-mail confirmado, conta aprovada, e MFA validado. A única exceção
+ao terceiro item é o navegador marcado como confiável por até 30 dias (ver "Confiar neste
+navegador" abaixo) — a senha, porém, **nunca** é dispensada, em nenhum cenário.
 
 ### 1. Cadastro (`POST /api/auth/register`)
 
@@ -57,12 +57,46 @@ se `mfaEnabled` ainda for `false`, devolve um ticket de bootstrap e o front redi
 
 `precheck` emite um ticket de `mfa-challenge`; a tela `/mfa-challenge` pede o código de 6
 dígitos (ou um backup code como alternativa) e chama `signIn("credentials", { ticket, totpCode })`
-— o NextAuth valida tudo dentro de `authorize()` em `src/lib/auth.ts`.
+— o NextAuth valida tudo dentro de `authorize()` em `src/lib/auth.ts`. **Exceção**: se o navegador
+tiver o cookie de confiança válido para essa conta (ver seção abaixo), `precheck` pula direto para
+o passo 6 sem pedir TOTP.
+
+### 6. Confiar neste navegador (30 dias)
+
+Na tela de configuração inicial do MFA (após validar o 1º código) e na tela de desafio de todo
+login seguinte, existe um checkbox **"Confiar neste navegador por 30 dias"**. Ao marcar:
+
+1. Depois que o `signIn` estabelece a sessão, o client chama `POST /api/auth/trust-device`
+   (sessão obrigatória).
+2. Essa rota emite um ticket de propósito `trusted-device` (HMAC assinado, 30 dias) e grava como
+   cookie **httpOnly, `secure` em produção, `sameSite: lax`** — nunca acessível via JS no
+   navegador.
+3. Em cada `login/precheck` seguinte, se `user.mfaEnabled` for `true`, o servidor primeiro checa
+   esse cookie: se válido e o `userId` dentro dele bater com o usuário que está logando, emite um
+   ticket de propósito `trusted-device-login` (5 min) em vez de `mfa-challenge` — o front então
+   chama `signIn` direto com esse ticket, sem pedir TOTP nem backup code.
+
+**O que continua igual, sem exceção**: a senha é sempre exigida em todo login, independente do
+cookie. O cookie só dispensa o *segundo fator*, nunca o primeiro. `authorize()` também
+re-valida ao vivo no banco (`emailVerified`, `mfaEnabled`, `status === "ACTIVE"`) antes de aceitar
+o ticket — se o admin desativar a conta ou o MFA for reconfigurado nesse meio-tempo, o cookie
+antigo deixa de funcionar automaticamente, mesmo antes de expirar.
+
+**Escopo**: o cookie é assinado com o `userId` embutido — ele só libera login sem TOTP para a
+*mesma conta* que o gerou. Se outra pessoa usar o mesmo navegador com um e-mail diferente, o
+cookie simplesmente não bate e o fluxo normal de MFA é exigido.
+
+**Trade-off aceito conscientemente**: um navegador confiável comprometido/roubado dentro da
+janela de 30 dias permite entrar só com a senha daquela conta. Não há hoje uma tela de "gestão de
+dispositivos confiáveis" para listar/revogar cookies individualmente — a única forma de revogar
+todos de uma vez é gerar um novo `AUTH_SECRET` (invalida todos os tickets/cookies assinados do
+sistema inteiro, inclusive sessões ativas) ou aguardar a expiração natural de 30 dias.
 
 ## Tickets assinados (`src/lib/tickets.ts`)
 
 Em vez de reenviar a senha entre as etapas do login, cada etapa emite um ticket HMAC-SHA256
-assinado (verificado com comparação em tempo constante) com expiração curta:
+assinado (verificado com comparação em tempo constante) com expiração curta (exceto o cookie de
+confiança, que é de propósito intencionalmente longo):
 
 | Propósito | Emitido em | Consumido em | Validade | Carrega o secret TOTP? |
 |---|---|---|---|---|
@@ -70,6 +104,8 @@ assinado (verificado com comparação em tempo constante) com expiração curta:
 | `mfa-setup-pending` | `mfa/setup` | `mfa/verify` | 10 min | sim |
 | `mfa-challenge` | `login/precheck` (MFA já configurado) | `authorize()` do NextAuth | 5 min | não |
 | `mfa-verified` | `mfa/verify` (após validar o 1º código) | `authorize()` do NextAuth | 5 min | não |
+| `trusted-device` | `POST /api/auth/trust-device` (cookie httpOnly) | `login/precheck` (leitura do cookie) | 30 dias | não |
+| `trusted-device-login` | `login/precheck` (cookie de confiança válido) | `authorize()` do NextAuth | 5 min | não |
 
 ## Criptografia e hashing (`src/lib/mfa.ts`)
 
