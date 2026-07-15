@@ -43,6 +43,15 @@ Detalhe completo do fluxo: `docs/AUTENTICACAO_E_SEGURANCA.md`.
 | `/api/stock/[id]` | PATCH | Atualiza campos editáveis; sempre atualiza `updatedById` |
 | `/api/stock/[id]` | DELETE | Bloqueado (409) se houver pedido/movimentação/kit vinculado |
 
+## Categorias de estoque
+
+| Rota | Método | Descrição |
+|---|---|---|
+| `/api/categories` | GET | Lista categorias (ordem alfabética) |
+| `/api/categories` | POST | Cria categoria; 409 se nome duplicado |
+| `/api/categories/[id]` | PATCH | Renomeia; atualiza em cascata `StockItem.category` dos itens que usavam o nome antigo; 409 se nome duplicado |
+| `/api/categories/[id]` | DELETE | Bloqueado (409) se algum item de estoque ainda usar essa categoria |
+
 ## Movimentações
 
 | Rota | Método | Descrição |

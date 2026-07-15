@@ -7,13 +7,12 @@ import { Button } from "@/components/ui/button";
 import { SaveButton, type SaveStatus } from "@/components/ui/save-button";
 import { ErrorBanner } from "@/components/ui/error-banner";
 import type { StockItemDTO, StockItemFormValues } from "@/types/stock";
+import type { CategoryDTO } from "@/types/category";
 
-const CATEGORIES = ["Brindes", "Materiais Gráficos", "Camisetas", "Kits", "Outros"];
-
-function toFormValues(item?: StockItemDTO): StockItemFormValues {
+function toFormValues(item?: StockItemDTO, defaultCategory = ""): StockItemFormValues {
   return {
     name: item?.name ?? "",
-    category: item?.category ?? CATEGORIES[0],
+    category: item?.category ?? defaultCategory,
     quantity: item?.quantity ?? 0,
     minStock: item?.minStock ?? 0,
     idealStock: item?.idealStock ?? 0,
@@ -25,14 +24,16 @@ function toFormValues(item?: StockItemDTO): StockItemFormValues {
 
 export function StockModal({
   item,
+  categories,
   onClose,
   onSaved,
 }: {
   item?: StockItemDTO;
+  categories: CategoryDTO[];
   onClose: () => void;
   onSaved: () => void;
 }) {
-  const [form, setForm] = useState<StockItemFormValues>(() => toFormValues(item));
+  const [form, setForm] = useState<StockItemFormValues>(() => toFormValues(item, categories[0]?.name ?? ""));
   const [status, setStatus] = useState<SaveStatus>("idle");
   const [error, setError] = useState<string | null>(null);
 
@@ -78,8 +79,8 @@ export function StockModal({
               className="w-full rounded-lg border border-zinc-200 bg-white px-3 py-2 text-sm text-zinc-900 outline-none transition-colors focus:border-brand-primary focus:ring-2 focus:ring-brand-primary/20 dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-50"
             />
             <datalist id="categorias-estoque">
-              {CATEGORIES.map((c) => (
-                <option key={c} value={c} />
+              {categories.map((c) => (
+                <option key={c.id} value={c.name} />
               ))}
             </datalist>
           </label>

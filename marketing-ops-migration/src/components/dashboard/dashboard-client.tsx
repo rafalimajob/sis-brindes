@@ -67,13 +67,12 @@ export function DashboardClient({
   }
   const evolData = [...evolMap.entries()].sort(([a], [b]) => (a > b ? 1 : -1)).map(([month, pedidos]) => ({ month, pedidos }));
 
-  const projMap = new Map<string, number>();
+  const itemMap = new Map<string, number>();
   for (const m of periodMovements) {
     if (m.direction !== "SAIDA") continue;
-    const project = m.project || "Outros";
-    projMap.set(project, (projMap.get(project) ?? 0) + m.quantity);
+    itemMap.set(m.stockItem.name, (itemMap.get(m.stockItem.name) ?? 0) + m.quantity);
   }
-  const projData = [...projMap.entries()].map(([project, qty]) => ({ project, qty }));
+  const itemData = [...itemMap.entries()].map(([project, qty]) => ({ project, qty }));
 
   const criticalItems = stock.filter((s) => s.quantity < s.minStock).slice(0, 6);
   const latestOrders = periodOrders.slice(0, 5);
@@ -98,7 +97,7 @@ export function DashboardClient({
       <div className="grid gap-4 lg:grid-cols-2">
         <StatusBarChart data={statusData} />
         <OrdersEvolutionChart data={evolData} />
-        <ProjectConsumptionChart data={projData} />
+        <ProjectConsumptionChart data={itemData} title="Consumo por Item" />
 
         <Card>
           <div className="mb-4 text-sm font-medium text-zinc-700 dark:text-zinc-300">

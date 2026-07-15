@@ -1,12 +1,16 @@
 import { prisma } from "@/lib/prisma";
 import { StockGrid } from "@/components/stock/stock-grid";
 import type { StockItemDTO } from "@/types/stock";
+import type { CategoryDTO } from "@/types/category";
 
 export default async function EstoquePage() {
-  const items = await prisma.stockItem.findMany({
-    include: { updatedBy: { select: { name: true } } },
-    orderBy: { name: "asc" },
-  });
+  const [items, categories] = await Promise.all([
+    prisma.stockItem.findMany({
+      include: { updatedBy: { select: { name: true } } },
+      orderBy: { name: "asc" },
+    }),
+    prisma.category.findMany({ orderBy: { name: "asc" } }),
+  ]);
 
   const dtoItems: StockItemDTO[] = items.map((item) => ({
     id: item.id,
@@ -27,5 +31,12 @@ export default async function EstoquePage() {
     updatedAt: item.updatedAt.toISOString(),
   }));
 
-  return <StockGrid initialItems={dtoItems} />;
+  const dtoCategories: CategoryDTO[] = categories.map((c) => ({
+    id: c.id,
+    name: c.name,
+    createdAt: c.createdAt.toISOString(),
+    updatedAt: c.updatedAt.toISOString(),
+  }));
+
+  return <StockGrid initialItems={dtoItems} initialCategories={dtoCategories} />;
 }

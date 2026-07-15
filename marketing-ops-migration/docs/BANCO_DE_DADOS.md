@@ -66,6 +66,21 @@ Area ──< Movement (retiradas de "Consumo por área")
   de propósito — nunca expor o id interno como identificador de negócio.
 - `lastCost` é o campo usado como snapshot de custo em retiradas de "Consumo por área" (ver
   abaixo) — atualizar `lastCost` não altera o custo de retiradas já registradas.
+- `category` continua sendo texto livre (não uma FK) — ver "Categorias" abaixo para o porquê.
+
+### Categorias (`Category`)
+
+- Cadastro gerenciável dos nomes de categoria usados em `StockItem.category`, gerenciado na tela
+  "Gerenciar categorias" (`/estoque`, `POST/PATCH/DELETE /api/categories`). **De propósito não é
+  uma FK do `StockItem`** — `StockItem.category` continua sendo o mesmo campo texto livre de
+  sempre, só que agora alimentado por uma lista real em vez de um array hardcoded no componente.
+  Isso evita uma migração de dados arriscada (converter todo `stock_items.category` existente para
+  `categoryId`) por um ganho que não muda o comportamento do usuário.
+- Renomear uma categoria (`PATCH`) atualiza em cascata, na mesma transação, todo
+  `StockItem.category` que tinha o nome antigo — assim a lista gerenciada e os itens já
+  cadastrados nunca ficam dessincronizados.
+- Excluir uma categoria é bloqueado (409) se algum `StockItem` ainda estiver com esse valor em
+  `category` — verificado por contagem, já que não existe FK para o Prisma recusar sozinho.
 
 ### Movimentações (`Movement`)
 
@@ -129,6 +144,7 @@ Ficam em `prisma/migrations/`, uma pasta por migração (nome com timestamp + de
 | `20260711051859_orders_link_stock_item` | Ajuste no relacionamento Pedido↔Estoque |
 | `20260711162554_add_area_consumption` | Módulo Consumo por área (`Area`, campos `areaId`/`unitCost`/`totalCost` em `Movement`) |
 | `20260713163000_add_user_status` | `UserStatus` (aprovação/desativação de usuários) — contas existentes foram migradas para `ACTIVE` automaticamente, só cadastros novos nascem `PENDING` |
+| `20260714200000_add_category_table` | Tabela `Category` (gerenciamento de categorias de estoque) — populada automaticamente com os valores distintos já existentes em `stock_items.category` |
 
 Para aplicar em um banco novo: `npx prisma migrate deploy` (produção) ou
 `npx prisma migrate dev` (desenvolvimento, também sincroniza o schema se houver diff). Depois,

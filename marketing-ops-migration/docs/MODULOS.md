@@ -11,7 +11,7 @@ Pedidos/Estoque/Movimentações (sem tabelas próprias).
 
 - **Filtro de período** (`DateRangeFilter`, presets: Tudo / Mês atual / Mês anterior / Últimos 3
   meses / Este ano) — afeta os KPIs de pedidos ("em andamento", "atrasados", "entregues no
-  período"), a evolução mensal e o consumo por projeto. **Não afeta**: os KPIs de estoque
+  período"), a evolução mensal e o consumo por item. **Não afeta**: os KPIs de estoque
   ("Itens em estoque", "Abaixo do mínimo" — são sempre o saldo atual, não faz sentido "filtrar
   por período" um saldo) nem o gráfico "Pedidos por status", que também é sempre a distribuição
   atual de todos os pedidos, independente do período selecionado — um pedido cancelado ou
@@ -20,9 +20,12 @@ Pedidos/Estoque/Movimentações (sem tabelas próprias).
   `src/lib/order-status.ts`) — os 8 estágios não-terminais seguem uma progressão de matiz
   (cinza → ciano → azul → roxo), e os dois estágios finais reaproveitam as cores semânticas de
   sucesso/erro do resto do app.
-- **Consumo por Projeto/Campanha**: soma a quantidade de itens retirados (`SAIDA`) por projeto
-  no período. Cada barra tem uma cor cíclica diferente (`categoryColor()` em
-  `src/lib/theme-colors.ts`) para facilitar comparar visualmente barras vizinhas.
+- **Consumo por Item**: soma a quantidade de itens retirados (`SAIDA`) por item de estoque
+  (`StockItem.name`) no período. Cada barra tem uma cor cíclica diferente (`categoryColor()` em
+  `src/lib/theme-colors.ts`) para facilitar comparar visualmente barras vizinhas. O componente que
+  renderiza este gráfico (`ProjectConsumptionChart`) é compartilhado com "Consumo por área" — o
+  nome do componente e o campo `project` no formato de dados são só um resquício histórico do
+  primeiro uso; hoje ele recebe qualquer rótulo (item, área etc.) via a prop `title`.
 
 ## Pedidos (`/pedidos`)
 
@@ -56,6 +59,12 @@ Cadastro dos itens que a área de Marketing controla fisicamente.
   editado diretamente aqui, exceto ajuste manual), `minStock`/`idealStock` (usados para o
   indicador de nível — abaixo do mínimo, próximo do mínimo, adequado) e `lastCost` (usado como
   snapshot de custo nas retiradas de Consumo por área).
+- **Categorias**: botão "Gerenciar categorias" abre um cadastro próprio (criar/renomear/excluir),
+  em vez da lista fixa de 5 valores que existia antes. O campo de categoria no formulário de item
+  continua sendo texto livre com sugestões (`<datalist>`) — agora alimentadas por essa lista
+  gerenciada em vez de hardcoded. Renomear uma categoria atualiza automaticamente todos os itens
+  que já usavam o nome antigo; excluir é bloqueado (409) se algum item ainda estiver com essa
+  categoria.
 - Duas visualizações (grade de cartões / lista), alternáveis pelo `ViewToggle`.
 - Exclusão é bloqueada se o item tiver pedidos, movimentações ou kits vinculados.
 

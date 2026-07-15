@@ -60,6 +60,7 @@ enum HistoryEntity {
   KIT
   AREA
   USER
+  CATEGORY
 }
 
 // PENDING: cadastro concluído, aguardando aprovação de um administrador (não consegue logar).
@@ -301,6 +302,23 @@ model KitOutput {
 
   @@index([performedById])
   @@map("kit_outputs")
+}
+
+// ----------------------------------------------------------------------------
+// CATEGORIAS DE ESTOQUE
+// Lista gerenciável de categorias usadas em StockItem.category (campo texto
+// livre, ver módulo 3) — esta tabela existe só para dar suporte à tela de
+// gerenciamento ("Gerenciar categorias"), não é uma FK do StockItem.
+// ----------------------------------------------------------------------------
+
+model Category {
+  id        String   @id @default(cuid())
+  name      String   @unique
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("categories")
 }
 
 // ----------------------------------------------------------------------------
