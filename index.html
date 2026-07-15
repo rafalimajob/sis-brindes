@@ -720,7 +720,7 @@ Pedidos/Estoque/Movimentações (sem tabelas próprias).</p>
 <ul>
 <li><strong>Filtro de período</strong> (<code>DateRangeFilter</code>, presets: Tudo / Mês atual / Mês anterior / Últimos 3
 meses / Este ano) — afeta os KPIs de pedidos (&quot;em andamento&quot;, &quot;atrasados&quot;, &quot;entregues no
-período&quot;), a evolução mensal e o consumo por projeto. <strong>Não afeta</strong>: os KPIs de estoque
+período&quot;), a evolução mensal e o consumo por item. <strong>Não afeta</strong>: os KPIs de estoque
 (&quot;Itens em estoque&quot;, &quot;Abaixo do mínimo&quot; — são sempre o saldo atual, não faz sentido &quot;filtrar
 por período&quot; um saldo) nem o gráfico &quot;Pedidos por status&quot;, que também é sempre a distribuição
 atual de todos os pedidos, independente do período selecionado — um pedido cancelado ou
@@ -729,9 +729,12 @@ entregue em outro mês continua contando ali.</li>
 <code>src/lib/order-status.ts</code>) — os 8 estágios não-terminais seguem uma progressão de matiz
 (cinza → ciano → azul → roxo), e os dois estágios finais reaproveitam as cores semânticas de
 sucesso/erro do resto do app.</li>
-<li><strong>Consumo por Projeto/Campanha</strong>: soma a quantidade de itens retirados (<code>SAIDA</code>) por projeto
-no período. Cada barra tem uma cor cíclica diferente (<code>categoryColor()</code> em
-<code>src/lib/theme-colors.ts</code>) para facilitar comparar visualmente barras vizinhas.</li>
+<li><strong>Consumo por Item</strong>: soma a quantidade de itens retirados (<code>SAIDA</code>) por item de estoque
+(<code>StockItem.name</code>) no período. Cada barra tem uma cor cíclica diferente (<code>categoryColor()</code> em
+<code>src/lib/theme-colors.ts</code>) para facilitar comparar visualmente barras vizinhas. O componente que
+renderiza este gráfico (<code>ProjectConsumptionChart</code>) é compartilhado com &quot;Consumo por área&quot; — o
+nome do componente e o campo <code>project</code> no formato de dados são só um resquício histórico do
+primeiro uso; hoje ele recebe qualquer rótulo (item, área etc.) via a prop <code>title</code>.</li>
 </ul>
 <h3>Pedidos (<code>/pedidos</code>)</h3>
 <p>CRUD de pedidos de compra, sempre vinculados a um item de estoque já cadastrado.</p>
@@ -761,6 +764,12 @@ módulos) — a rota <code>DELETE</code> não faz <code>try/catch</code> de FK c
 editado diretamente aqui, exceto ajuste manual), <code>minStock</code>/<code>idealStock</code> (usados para o
 indicador de nível — abaixo do mínimo, próximo do mínimo, adequado) e <code>lastCost</code> (usado como
 snapshot de custo nas retiradas de Consumo por área).</li>
+<li><strong>Categorias</strong>: botão &quot;Gerenciar categorias&quot; abre um cadastro próprio (criar/renomear/excluir),
+em vez da lista fixa de 5 valores que existia antes. O campo de categoria no formulário de item
+continua sendo texto livre com sugestões (<code>&lt;datalist&gt;</code>) — agora alimentadas por essa lista
+gerenciada em vez de hardcoded. Renomear uma categoria atualiza automaticamente todos os itens
+que já usavam o nome antigo; excluir é bloqueado (409) se algum item ainda estiver com essa
+categoria.</li>
 <li>Duas visualizações (grade de cartões / lista), alternáveis pelo <code>ViewToggle</code>.</li>
 <li>Exclusão é bloqueada se o item tiver pedidos, movimentações ou kits vinculados.</li>
 </ul>
@@ -894,6 +903,21 @@ incrementa o sufixo numérico do último código) e é <strong>separado</strong>
 de propósito — nunca expor o id interno como identificador de negócio.</li>
 <li><code>lastCost</code> é o campo usado como snapshot de custo em retiradas de &quot;Consumo por área&quot; (ver
 abaixo) — atualizar <code>lastCost</code> não altera o custo de retiradas já registradas.</li>
+<li><code>category</code> continua sendo texto livre (não uma FK) — ver &quot;Categorias&quot; abaixo para o porquê.</li>
+</ul>
+<h4>Categorias (<code>Category</code>)</h4>
+<ul>
+<li>Cadastro gerenciável dos nomes de categoria usados em <code>StockItem.category</code>, gerenciado na tela
+&quot;Gerenciar categorias&quot; (<code>/estoque</code>, <code>POST/PATCH/DELETE /api/categories</code>). <strong>De propósito não é
+uma FK do <code>StockItem</code></strong> — <code>StockItem.category</code> continua sendo o mesmo campo texto livre de
+sempre, só que agora alimentado por uma lista real em vez de um array hardcoded no componente.
+Isso evita uma migração de dados arriscada (converter todo <code>stock_items.category</code> existente para
+<code>categoryId</code>) por um ganho que não muda o comportamento do usuário.</li>
+<li>Renomear uma categoria (<code>PATCH</code>) atualiza em cascata, na mesma transação, todo
+<code>StockItem.category</code> que tinha o nome antigo — assim a lista gerenciada e os itens já
+cadastrados nunca ficam dessincronizados.</li>
+<li>Excluir uma categoria é bloqueado (409) se algum <code>StockItem</code> ainda estiver com esse valor em
+<code>category</code> — verificado por contagem, já que não existe FK para o Prisma recusar sozinho.</li>
 </ul>
 <h4>Movimentações (<code>Movement</code>)</h4>
 <p>Tabela central de todo o histórico de saldo. Cada linha tem:</p>
@@ -972,6 +996,10 @@ de autoria: o próprio log de auditoria não pode travar a exclusão/desativaç�
 <tr>
 <td><code>20260713163000_add_user_status</code></td>
 <td><code>UserStatus</code> (aprovação/desativação de usuários) — contas existentes foram migradas para <code>ACTIVE</code> automaticamente, só cadastros novos nascem <code>PENDING</code></td>
+</tr>
+<tr>
+<td><code>20260714200000_add_category_table</code></td>
+<td>Tabela <code>Category</code> (gerenciamento de categorias de estoque) — populada automaticamente com os valores distintos já existentes em <code>stock_items.category</code></td>
 </tr>
 </tbody></table></div>
 <p>Para aplicar em um banco novo: <code>npx prisma migrate deploy</code> (produção) ou
@@ -1111,6 +1139,36 @@ tratamento local de <code>P2002</code> (conflito de unicidade) e <code>P2003</co
 <td><code>/api/stock/[id]</code></td>
 <td>DELETE</td>
 <td>Bloqueado (409) se houver pedido/movimentação/kit vinculado</td>
+</tr>
+</tbody></table></div>
+<h3>Categorias de estoque</h3>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Rota</th>
+<th>Método</th>
+<th>Descrição</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>/api/categories</code></td>
+<td>GET</td>
+<td>Lista categorias (ordem alfabética)</td>
+</tr>
+<tr>
+<td><code>/api/categories</code></td>
+<td>POST</td>
+<td>Cria categoria; 409 se nome duplicado</td>
+</tr>
+<tr>
+<td><code>/api/categories/[id]</code></td>
+<td>PATCH</td>
+<td>Renomeia; atualiza em cascata <code>StockItem.category</code> dos itens que usavam o nome antigo; 409 se nome duplicado</td>
+</tr>
+<tr>
+<td><code>/api/categories/[id]</code></td>
+<td>DELETE</td>
+<td>Bloqueado (409) se algum item de estoque ainda usar essa categoria</td>
 </tr>
 </tbody></table></div>
 <h3>Movimentações</h3>
